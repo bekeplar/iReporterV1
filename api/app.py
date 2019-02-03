@@ -1,4 +1,3 @@
-"""Contains function that creates the app"""
 from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_swagger_ui import get_swaggerui_blueprint
