@@ -1,3 +1,5 @@
+"""File for all authentication code"""
+
 import datetime
 import jwt
 from flask import request, jsonify, abort
