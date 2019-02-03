@@ -1,4 +1,4 @@
-"""Module contains functions for validating user input"""
+"""Module contains functions for validating user inputs as provided"""
 import re
 from flask import jsonify, request, abort
 from functools import wraps
