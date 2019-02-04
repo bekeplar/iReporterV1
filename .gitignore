@@ -7,4 +7,3 @@ __pycache__
 .swp
 htmlcov
 .coverage
-tests
