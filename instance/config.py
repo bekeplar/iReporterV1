@@ -1,10 +1,9 @@
-from os import environ
+import os
 
 class Config:
     DEBUG = False
     TESTING = False
     CSRF_ENABLED = True
-    SECRET_KEY = environ.get("SECRET_KEY")
     JSON_SORT_KEYS = False
 
 class ProductionConfig(Config):
@@ -13,7 +12,15 @@ class ProductionConfig(Config):
 class DevelopmentConfig(Config):
     DEVELOPMENT = True
     DEBUG = True
+    ENV = "Development"
+    DATABASE_URI = 'postgres://postgres:bekeplar@localhost:5432/postgres'
 
 class TestingConfig(Config):
     TESTING = True
+    DATABASE_URI = 'postgres://postgres:bekeplar@localhost:5432/postgres'
 
+app_config = {
+    "Development": DevelopmentConfig,
+    "Testing": TestingConfig,
+    "Production": ProductionConfig
+}

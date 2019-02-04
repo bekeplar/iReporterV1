@@ -4,7 +4,7 @@ from api.helpers.auth_token import encode_token
 from api.helpers.validation import validate_new_user, sign_up_data_required
 from api.models.user import User
 
-users_bp = Blueprint("users", __name__, url_prefix="/api/v3")
+users_bp = Blueprint("users", __name__, url_prefix="/api/v1")
 user_obj = User()
 
 

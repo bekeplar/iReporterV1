@@ -4,7 +4,7 @@ from database.db import DatabaseConnection
 
 class Incident:
     def __init__(self):
-        self.db = DatabaseConnection()
+        self.db = DatabaseConnection('Database_url')
 
     def insert_incident(self, inc_type="red-flag", **kwargs):
         title = kwargs.get("title")

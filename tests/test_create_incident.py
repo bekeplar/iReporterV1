@@ -16,7 +16,7 @@ from .base import (
 # # CREATE A RED-FLAG
 def test_create_a_red_flag_without_a_token(client):
     # test only logged in user with token
-    response = client.post("api/v3/incidents")
+    response = client.post("api/v1/incidents")
     assert response.status_code == 401
     data = json.loads(response.data.decode())
     assert data == {"error": invalid_token_message, "status": 401}
@@ -24,7 +24,7 @@ def test_create_a_red_flag_without_a_token(client):
 
 def test_create_a_red_flag_with_invalid_token(client):
     # test onlcreate incident record with invalid token
-    response = client.post("api/v3/incidents", headers=invalid_id_token_header)
+    response = client.post("api/v1/incidents", headers=invalid_id_token_header)
     assert response.status_code == 401
     data = json.loads(response.data.decode())
     assert data == {
@@ -35,7 +35,7 @@ def test_create_a_red_flag_with_invalid_token(client):
 
 def test_create_a_red_flag_with_bad_json_format_data(client):
     response = client.post(
-        "/api/v3/incidents", headers=user1_header, data="my incident"
+        "/api/v1/incidents", headers=user1_header, data="my incident"
     )
     assert response.status_code == 400
     data = json.loads(response.data.decode())
@@ -44,7 +44,7 @@ def test_create_a_red_flag_with_bad_json_format_data(client):
 
 def test_admin_cannot_create_a_red_flag(client):
     response = client.post(
-        "api/v3/incidents", headers=admin_header, data=json.dumps(new_red_flag)
+        "api/v1/incidents", headers=admin_header, data=json.dumps(new_red_flag)
     )
     assert response.status_code == 401
     data = json.loads(response.data.decode())
@@ -55,7 +55,7 @@ def test_admin_cannot_create_a_red_flag(client):
 
 
 def test_create_a_red_flag_without_data(client):
-    response = client.post("api/v3/incidents", headers=user1_header)
+    response = client.post("api/v1/incidents", headers=user1_header)
     assert response.status_code == 400
     data = json.loads(response.data.decode())
     assert data["error"] == "Please provide incident Data"
@@ -66,7 +66,7 @@ def test_create_a_red_flag_with_valid_data(client):
         "comment"
     ] = "Lorem ipsum eiusmod temport labore et dolore magna"
     response = client.post(
-        "api/v3/incidents", headers=user1_header, data=json.dumps(new_red_flag)
+        "api/v1/incidents", headers=user1_header, data=json.dumps(new_red_flag)
     )
     assert response.status_code == 201
     data = json.loads(response.data.decode())
@@ -79,7 +79,7 @@ def test_create_a_red_flag_without_wrong_input(client):
 
     new_red_flag["location"] = ["jk", 180]
     response = client.post(
-        "api/v3/incidents", headers=user1_header, data=json.dumps(new_red_flag)
+        "api/v1/incidents", headers=user1_header, data=json.dumps(new_red_flag)
     )
     assert response.status_code == 400
     data = json.loads(response.data.decode())
@@ -95,7 +95,7 @@ def test_create_a_red_flag_without_wrong_input(client):
 
     # create a red flag with one coordinate in the location
     response = client.post(
-        "api/v3/incidents",
+        "api/v1/incidents",
         headers=user1_header,
         data=json.dumps(wrong_input_1),
     )
@@ -127,7 +127,7 @@ def test_create_a_red_flag_without_wrong_input(client):
     wrong_input_1["comment"] = "Lorem ipsum"
 
     response = client.post(
-        "api/v3/incidents",
+        "api/v1/incidents",
         headers=user1_header,
         data=json.dumps(wrong_input_1),
     )
@@ -149,7 +149,7 @@ def test_create_a_red_flag_without_wrong_input(client):
     wrong_input_1["title"] = ""
 
     response = client.post(
-        "api/v3/incidents",
+        "api/v1/incidents",
         headers=user1_header,
         data=json.dumps(wrong_input_1),
     )
@@ -168,7 +168,7 @@ def test_create_a_red_flag_without_wrong_input(client):
     wrong_input_1["type"] = "redflag"
 
     response = client.post(
-        "api/v3/incidents",
+        "api/v1/incidents",
         headers=user1_header,
         data=json.dumps(wrong_input_1),
     )
@@ -182,7 +182,7 @@ def test_create_a_red_flag_without_wrong_input(client):
 
 def test_create_an_intervention_with_valid_data(client):
     response = client.post(
-        "api/v3/incidents",
+        "api/v1/incidents",
         headers=user2_header,
         data=json.dumps(new_intervention),
     )

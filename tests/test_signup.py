@@ -35,7 +35,7 @@ data_with_wrong_keys = {
 
 
 def test_register_with_no_data(client):
-    response = client.post("api/v3/auth/signup", headers=headers)
+    response = client.post("api/v1/auth/signup", headers=headers)
     assert response.status_code == 400
     data = json.loads(response.data.decode())
     assert data["error"] == "Provide provide valid data to register"
@@ -43,7 +43,7 @@ def test_register_with_no_data(client):
 
 def test_register_with_wrong_key(client):
     response = client.post(
-        "api/v3/auth/signup",
+        "api/v1/auth/signup",
         headers=headers,
         data=json.dumps(data_with_wrong_keys),
     )
@@ -56,7 +56,7 @@ def test_register_with_wrong_key(client):
 #
 def test_register_with_wrong_invalid_format_data(client):
     response = client.post(
-        "api/v3/auth/signup", headers=headers, data=json.dumps(new_user_data)
+        "api/v1/auth/signup", headers=headers, data=json.dumps(new_user_data)
     )
     assert response.status_code == 400
     data = json.loads(response.data.decode())
@@ -76,7 +76,7 @@ def test_register_with_valid_format_data(client):
     new_user_data["password"] = "Password123"
 
     response = client.post(
-        "api/v3/auth/signup", headers=headers, data=json.dumps(new_user_data)
+        "api/v1/auth/signup", headers=headers, data=json.dumps(new_user_data)
     )
     assert response.status_code == 201
     data = json.loads(response.data.decode())
@@ -87,7 +87,7 @@ def test_register_with_valid_format_data(client):
 
 def test_register_user_with_duplicate_data(client):
     response = client.post(
-        "api/v3/auth/signup", headers=headers, data=json.dumps(new_user_data)
+        "api/v1/auth/signup", headers=headers, data=json.dumps(new_user_data)
     )
     assert response.status_code == 409
     data = json.loads(response.data.decode())

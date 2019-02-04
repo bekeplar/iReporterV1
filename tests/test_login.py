@@ -17,7 +17,7 @@ def test_user_login_with_valid_credentials_(client):
     "Tests login a user "
     # create user
     register_response = client.post(
-        "/api/v3/auth/signup", data=json.dumps(valid_user), headers=headers
+        "/api/v1/auth/signup", data=json.dumps(valid_user), headers=headers
     )
     assert register_response.status_code == 201
     data = json.loads(register_response.data.decode())
@@ -25,7 +25,7 @@ def test_user_login_with_valid_credentials_(client):
 
 
 def test_user_login_without_data_(client):
-    response = client.post("/api/v3/auth/login", headers=headers)
+    response = client.post("/api/v1/auth/login", headers=headers)
     data = json.loads(response.data.decode())
     assert response.status_code == 400
     assert data["error"] == "Provide provide valid data to login"
@@ -33,7 +33,7 @@ def test_user_login_without_data_(client):
 
 def test_user_login_with_wrong_credentials_(client):
     response = client.post(
-        "/api/v3/auth/login",
+        "/api/v1/auth/login",
         data=json.dumps({"username": "bekeplax", "password": "Bekalaz213"}),
         headers=headers,
     )
@@ -44,7 +44,7 @@ def test_user_login_with_wrong_credentials_(client):
 
 def test_user_login_with_wrong_keys_in_credentials_data(client):
     response = client.post(
-        "/api/v3/auth/login",
+        "/api/v1/auth/login",
         data=json.dumps({"usrname": "user9", "password": "Password123"}),
         headers=headers,
     )
@@ -55,7 +55,7 @@ def test_user_login_with_wrong_keys_in_credentials_data(client):
 
 def test_user_login_with_correct_credentials_data(client):
     response = client.post(
-        "/api/v3/auth/login",
+        "/api/v1/auth/login",
         data=json.dumps({"username": "bekeplar", "password": "Bekalaze1234"}),
         headers=headers,
     )

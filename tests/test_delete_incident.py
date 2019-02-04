@@ -9,7 +9,7 @@ from .base import user2_header, user1_header
 
 def test_delete_red_flag_without_a_access_token(client):
     response = client.delete(
-        "api/v3/red-flags/68df1a76-80d0-4334-93f9-2f8d04a5ec8e"
+        "api/v1/red-flags/68df1a76-80d0-4334-93f9-2f8d04a5ec8e"
     )
     assert response.status_code == 401
     data = json.loads(response.data.decode())
@@ -20,7 +20,7 @@ def test_delete_red_flag_without_a_access_token(client):
 def test_delete_red_flag_with_red_flag_id_which_does_not_exist(client):
     # red flag id does not exist
     response = client.delete(
-        "api/v3/red-flags/68df1a76-80d0-4334-93f9-2f8d04a5ed8e",
+        "api/v1/red-flags/68df1a76-80d0-4334-93f9-2f8d04a5ed8e",
         headers=user1_header,
     )
     assert response.status_code == 404
@@ -30,7 +30,7 @@ def test_delete_red_flag_with_red_flag_id_which_does_not_exist(client):
 
 
 def test_delete_red_flag_with_invalid_format_red_flag_id(client):
-    response = client.delete("api/v3/red-flags/fdf", headers=user1_header)
+    response = client.delete("api/v1/red-flags/fdf", headers=user1_header)
 
     assert response.status_code == 400
     data = json.loads(response.data.decode())
@@ -40,7 +40,7 @@ def test_delete_red_flag_with_invalid_format_red_flag_id(client):
 
 def test_delete_red_flag_for_another_user(client):
     response = client.delete(
-        "api/v3/red-flags/68df1a76-80d0-4334-93f9-2f8d04a5ec8e",
+        "api/v1/red-flags/68df1a76-80d0-4334-93f9-2f8d04a5ec8e",
         headers=user2_header,
     )
     assert response.status_code == 403
@@ -51,7 +51,7 @@ def test_delete_red_flag_for_another_user(client):
 
 def test_delete_red_flag_for_with_status_other_than_draft(client):
     response = client.delete(
-        "api/v3/red-flags/df57bf19-1495-40aa-bbc3-5cc792a8f8f2",
+        "api/v1/red-flags/df57bf19-1495-40aa-bbc3-5cc792a8f8f2",
         headers=user1_header,
     )
     assert response.status_code == 403
@@ -64,7 +64,7 @@ def test_delete_red_flag_for_with_status_other_than_draft(client):
 
 def test_delete_red_flag(client):
     response = client.delete(
-        "api/v3/red-flags/68df1a76-80d0-4334-93f9-2f8d04a5ec8e",
+        "api/v1/red-flags/68df1a76-80d0-4334-93f9-2f8d04a5ec8e",
         headers=user1_header,
     )
     assert response.status_code == 200
@@ -75,7 +75,7 @@ def test_delete_red_flag(client):
 
 def test_delete_an_intervention(client):
     response = client.delete(
-        "api/v3/interventions/79bb7006-272e-4e0c-8253-117305466b6a",
+        "api/v1/interventions/79bb7006-272e-4e0c-8253-117305466b6a",
         headers=user1_header,
     )
     assert response.status_code == 200

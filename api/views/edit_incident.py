@@ -18,8 +18,8 @@ from api.helpers.validation import (
 from api.models.incident import Incident
 
 incident_obj = Incident()
-edit_bp = Blueprint("edit_bp", __name__, url_prefix="/api/v3")
-admin_bp = Blueprint("admin", __name__, url_prefix="/api/v3")
+edit_bp = Blueprint("edit_bp", __name__, url_prefix="/api/v1")
+admin_bp = Blueprint("admin", __name__, url_prefix="/api/v1")
 
 
 @edit_bp.route("/<incidents>/<incident_id>/location", methods=["PATCH"])

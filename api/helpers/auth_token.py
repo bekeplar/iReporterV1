@@ -10,14 +10,14 @@ from api.helpers.responses import expired_token_message, invalid_token_message
 from database.db import DatabaseConnection
 
 secret_key = environ.get("SECRET_KEY", "my_secret_key")
-db = DatabaseConnection()
+db = DatabaseConnection('Database_url')
 
 
 def encode_token(user_id):
     payload = {
         "userid": user_id,
         "iat": datetime.datetime.utcnow(),
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=3),
+        "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=24),
     }
     token = jwt.encode(payload, secret_key, algorithm="HS256").decode("utf-8")
 

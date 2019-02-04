@@ -8,7 +8,7 @@ def test_invalid_url(client):
     data = json.loads(response.data.decode())
     assert data["error"] == "Endpoint for specified URL does not exist"
 
-    response = client.get("api/v3/red-flag/ssd", headers=user1_header)
+    response = client.get("api/v1/red-flag/ssd", headers=user1_header)
     assert response.status_code == 404
     data = json.loads(response.data.decode())
     assert data["error"] == "Endpoint for specified URL does not exist"

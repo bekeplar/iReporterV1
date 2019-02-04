@@ -4,7 +4,7 @@ from api.helpers.auth_token import token_required
 from api.helpers.validation import is_valid_uuid, parse_incident_type
 from api.models.incident import Incident
 
-get_inc_bp = Blueprint("get_incidents", __name__, url_prefix="/api/v3")
+get_inc_bp = Blueprint("get_incidents", __name__, url_prefix="/api/v1")
 
 incident_obj = Incident()
 

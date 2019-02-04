@@ -14,7 +14,7 @@ class User:
     """class defines the user data structure"""
 
     def __init__(self, **kwargs):
-        self.db = DatabaseConnection()
+        self.db = DatabaseConnection('Database_url')
 
     def insert_user(self, **kwargs):
         first_name = kwargs["first_name"]

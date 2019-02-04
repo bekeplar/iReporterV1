@@ -13,7 +13,7 @@ from api.helpers.validation import (
 from api.models.incident import Incident
 
 incident_obj = Incident()
-del_inc_bp = Blueprint("del_inc_bp", __name__, url_prefix="/api/v3")
+del_inc_bp = Blueprint("del_inc_bp", __name__, url_prefix="/api/v1")
 
 
 @del_inc_bp.route("/<incidents>/<incident_id>", methods=["DELETE"])

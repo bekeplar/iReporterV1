@@ -1,19 +1,19 @@
 import datetime
-
-# from api.models.incident import Incident
+from api.app import create_app
+from flask import current_app as app
 from jwt import encode
 
 from api.helpers.auth_token import encode_token, secret_key
 from database.db import DatabaseConnection
 
-db = DatabaseConnection()
+db = DatabaseConnection('Database_url')
 
 
 def get_user_id(user_name):
     sql = f"SELECT id FROM users WHERE user_name='{user_name}'"
     db.cursor.execute(sql)
     result = db.cursor.fetchone()
-    return result.get("id")
+    return result
 
 
 def generate_token_header(token):

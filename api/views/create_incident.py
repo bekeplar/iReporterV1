@@ -6,7 +6,7 @@ from api.helpers.auth_token import (
     get_current_identity,
 )
 
-create_incident_bp = Blueprint("new_incident", __name__, url_prefix="/api/v3")
+create_incident_bp = Blueprint("new_incident", __name__, url_prefix="/api/v1")
 from api.models.incident import Incident
 from api.helpers.validation import validate_new_incident
 

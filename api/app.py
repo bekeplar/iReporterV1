@@ -1,25 +1,24 @@
 from flask import Flask, jsonify
-from flask_cors import CORS
-from flask_swagger_ui import get_swaggerui_blueprint
-
 from api.views.auth import users_bp
 from api.views.create_incident import create_incident_bp
 from api.views.delete_incident import del_inc_bp
 from api.views.edit_incident import edit_bp, admin_bp
 from api.views.get_incidents import get_inc_bp
-from instance.config import Config
+from instance.config import app_config
 
 
-def create_app(config=None):
+def create_app(config_name):
     """Set up Flask application in function"""
+    app = Flask(__name__, instance_relative_config=True)
+    app.config.from_object(app_config[config_name])
+    app.config.from_pyfile('config.py')
     app = Flask(__name__)
-    CORS(app)
 
     @app.route("/")
-    @app.route("/api/v3")
+    @app.route("/api/v1")
     def _hello_ireporter():
         return (
-            jsonify({"message": "Welcome to iReporter API V3", "status": 200}),
+            jsonify({"message": "Welcome to iReporter Api V1", "status": 200}),
             200,
         )
 
@@ -50,16 +49,11 @@ def create_app(config=None):
     def _method_not_allowed(e):
         return (jsonify({"error": "Method not allowed"}), 405)
 
-    app.config.from_object(Config)
     app.register_blueprint(users_bp)
     app.register_blueprint(create_incident_bp)
     app.register_blueprint(get_inc_bp)
     app.register_blueprint(edit_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(del_inc_bp)
-    SWAGGER_UI_URL = "/api/v3/docs"
-    API_URL = "https://kalsmic.github.io/swagger-ui/dist/ireporter_api_v3.json"
-
-    swagger_ui_blueprint = get_swaggerui_blueprint(SWAGGER_UI_URL, API_URL)
-    app.register_blueprint(swagger_ui_blueprint, url_prefix=SWAGGER_UI_URL)
+   
     return app
