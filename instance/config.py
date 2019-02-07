@@ -1,23 +1,38 @@
 import os
 
-class Config:
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+class BaseConfig:
+    """Default configuration. Details from this configuration
+    class are shared across all environments  """
     DEBUG = False
     TESTING = False
-    CSRF_ENABLED = True
-    JSON_SORT_KEYS = False
+    JWT_SECRET_KEY = 'this-is-my-secret'
 
-class ProductionConfig(Config):
-    DEBUG = False
 
-class DevelopmentConfig(Config):
-    DEVELOPMENT = True
+class DevelopmentConfig(BaseConfig):
+    """Development configuraion. Loads development configuration data
+    when the app is in the development environment"""
     DEBUG = True
+    TESTING = False
     ENV = "Development"
-    DATABASE_URI = 'postgres://postgres:bekeplar@localhost:5432/postgres'
 
-class TestingConfig(Config):
+class TestingConfig(BaseConfig):
+    """Testing configuraion. Loads Test configuration data
+    when the app is in the Test environment"""
+    DEBUG = True
     TESTING = True
-    DATABASE_URI = 'postgres://postgres:bekeplar@localhost:5432/postgres'
+    ENV = "Testing"
+
+
+class ProductionConfig(BaseConfig):
+    """Production configuraion. Loads Production configuration data
+    when the app is in the Production environment"""
+    DEBUG = False
+    TESTING = False
+    ENV = "Production"
+
+
 
 runtime_mode = "Testing"
 app_config = {
