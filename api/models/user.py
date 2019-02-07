@@ -14,7 +14,7 @@ class User:
     """class defines the user data structure"""
 
     def __init__(self, **kwargs):
-        self.db = DatabaseConnection('Database_url')
+        self.db = DatabaseConnection()
 
     def insert_user(self, **kwargs):
         first_name = kwargs["first_name"]
@@ -42,8 +42,8 @@ class User:
             "user_name as userName, "
             "registered_on as registered"
         )
-        self.db.cursor.execute(sql)
-        new_user = self.db.cursor.fetchone()
+        self.db.cursor_database.execute(sql)
+        new_user = self.db.cursor_database.fetchone()
         return new_user
 
     def check_if_user_exists(self, user_name, email, phone_number):
@@ -53,8 +53,8 @@ class User:
             f"user_name ='{user_name}' OR email='{email}' OR"
             f" phone_number='{phone_number}';"
         )
-        self.db.cursor.execute(user_exists_sql)
-        user_exists = self.db.cursor.fetchone()
+        self.db.cursor_database.execute(user_exists_sql)
+        user_exists = self.db.cursor_database.fetchone()
         error = {}
 
         if user_exists and user_exists.get("user_name") == user_name:
@@ -73,8 +73,8 @@ class User:
             "email,is_admin FROM users "
             f"WHERE id='{user_id}';"
         )
-        self.db.cursor.execute(user_sql)
-        user_details = self.db.cursor.fetchone()
+        self.db.cursor_database.execute(user_sql)
+        user_details = self.db.cursor_database.fetchone()
         return user_details
 
     def is_valid_credentials(self, user_name, user_password):
@@ -82,9 +82,9 @@ class User:
             "SELECT id,user_name ,user_password FROM users where user_name="
             f"'{user_name}';"
         )
-        self.db.cursor.execute(sql)
+        self.db.cursor_database.execute(sql)
 
-        user_db_details = self.db.cursor.fetchone()
+        user_db_details = self.db.cursor_database.fetchone()
 
         if (
                 user_db_details

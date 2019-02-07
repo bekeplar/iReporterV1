@@ -10,7 +10,7 @@ from api.helpers.responses import expired_token_message, invalid_token_message
 from database.db import DatabaseConnection
 
 secret_key = environ.get("SECRET_KEY", "my_secret_key")
-db = DatabaseConnection('Database_url')
+db = DatabaseConnection()
 
 
 def encode_token(user_id):

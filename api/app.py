@@ -19,7 +19,7 @@ def create_app(config_name):
 
     @app.route("/")
     @app.route("/api/v1")
-    def _hello_ireporter():
+    def home():
         return (
             jsonify({"message": "Welcome to iReporter Api V1", "status": 200}),
             200,

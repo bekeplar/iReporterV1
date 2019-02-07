@@ -4,25 +4,31 @@ from urllib.parse import urlparse
 import uuid
 import psycopg2
 from psycopg2.extras import RealDictCursor
+from instance.config import app_config, runtime_mode
+import os
 
 
 class DatabaseConnection:
-    def __init__(self, Database_url):
-        Database_url = "DATABASE_URL"
-        #parsed_url = urlparse(Database_url)
-        # db = parsed_url.path[1:]
-        # username = parsed_url.username
-        # hostname = parsed_url.hostname
-        # password = parsed_url.password
-        # port = parsed_url.port
-        
+    def __init__(self):
+        """class initializing method"""
         try:
-            self.conn = psycopg2.connect(database='postgres', user='postgres',
-                                    password='bekeplar', host='localhost',
-                                    port=5432)
-            self.conn.autocommit = True
-            self.cursor = self.conn.cursor(cursor_factory=RealDictCursor)
+            self.database_name = ""
+            self.database_connect = None
 
+            if runtime_mode == "Development":
+                self.database_connect = self.database_connection("postgres")
+
+            if runtime_mode == "Testing":
+                self.database_connect = self.database_connection("testing_db")
+
+            if runtime_mode == "Production":
+                DATABASE_URL = os.environ['DATABASE_URL']
+                self.database_connect = psycopg2.connect(DATABASE_URL, sslmode='require')
+
+            self.database_connect.autocommit = True
+            self.cursor_database = self.database_connect.cursor(cursor_factory=RealDictCursor)
+            print('Connected to the database successfully.')
+            print(self.database_name)
             
             create_user_table = """CREATE TABLE IF NOT EXISTS users
             (
@@ -63,15 +69,27 @@ class DatabaseConnection:
             incident_id uuid
             );"""
 
-            self.cursor.execute(create_user_table)
-            self.cursor.execute(create_incidents_table)
-            self.cursor.execute(create_images_db)
-            self.cursor.execute(create_videos_db)
+            self.cursor_database.execute(create_user_table)
+            self.cursor_database.execute(create_incidents_table)
+            self.cursor_database.execute(create_images_db)
+            self.cursor_database.execute(create_videos_db)
 
 
         except (Exception, psycopg2.Error) as e:
             print(e)
+    
+    def database_connection(self, database_name):
+            """Function for connecting to appropriate database"""
+            return psycopg2.connect(dbname='postgres', user='postgres', host='localhost', password='bekeplar')
 
-    def Database():
-        database_obj = DatabaseConnection(app.config['DATABASE_URI'])
-        return database_obj
+        
+    def drop_table(self, table_name):
+            """
+            Drop tables after tests
+            """
+            drop = f"DROP TABLE {table_name};"
+            self.cursor_database.execute(drop)
+
+
+if __name__ == '__main__':
+    database_name = DatabaseConnection()

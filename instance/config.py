@@ -19,8 +19,10 @@ class TestingConfig(Config):
     TESTING = True
     DATABASE_URI = 'postgres://postgres:bekeplar@localhost:5432/postgres'
 
+runtime_mode = "Testing"
 app_config = {
     "Development": DevelopmentConfig,
     "Testing": TestingConfig,
     "Production": ProductionConfig
 }
+

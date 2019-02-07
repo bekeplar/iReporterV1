@@ -61,7 +61,6 @@ class IncidentController:
                 ),
                 201,
             )
-
         return response
     
 
