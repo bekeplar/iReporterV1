@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 from api.views.user import users_bp
 from api.views.incident import (
-    create_redflag_bp,
+    create_incident_bp,
     del_inc_bp,
     edit_bp, 
     admin_bp,
@@ -52,7 +52,7 @@ def create_app(config_name):
         return (jsonify({"error": "Method not allowed"}), 405)
 
     app.register_blueprint(users_bp)
-    app.register_blueprint(create_redflag_bp)
+    app.register_blueprint(create_incident_bp)
     app.register_blueprint(get_inc_bp)
     app.register_blueprint(edit_bp)
     app.register_blueprint(admin_bp)

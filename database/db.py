@@ -32,7 +32,7 @@ class DatabaseConnection:
             
             create_user_table = """CREATE TABLE IF NOT EXISTS users
             (
-                id SERIAL NOT NULL PRIMARY KEY,
+                user_id SERIAL NOT NULL PRIMARY KEY,
                 first_name VARCHAR(25) NOT NULL,
                 last_name VARCHAR(25) NOT NULL,
                 other_names VARCHAR(25) NULL,
@@ -46,11 +46,11 @@ class DatabaseConnection:
 
             create_incidents_table = """CREATE TABLE IF NOT EXISTS incidents
             (
-                id SERIAL NOT NULL PRIMARY KEY,
+                incident_id SERIAL NOT NULL PRIMARY KEY,
                 title VARCHAR(125) NOT NULL,
                 comment TEXT NOT NULL,
                 location VARCHAR(50) NOT NULL,
-                created_by uuid,
+                created_by INT NOT NULL,
                 created_on  DATE DEFAULT CURRENT_TIMESTAMP,
                 status VARCHAR(50) NOT NULL,
                 incident_type VARCHAR(50) NOT NULL
@@ -58,15 +58,13 @@ class DatabaseConnection:
 
             
             create_images_db = """CREATE TABLE IF NOT EXISTS incident_images(
-            id SERIAL PRIMARY KEY,
-            image_url VARCHAR(50),
-            incident_id uuid
+            incident_id SERIAL PRIMARY KEY,
+            image_url VARCHAR(50)
             );"""
 
             create_videos_db = """CREATE TABLE IF NOT EXISTS incident_videos(
-            id SERIAL PRIMARY KEY,
-            video_url VARCHAR(50) DEFAULT '',
-            incident_id uuid
+            incident_id SERIAL PRIMARY KEY,
+            video_url VARCHAR(50) DEFAULT ''
             );"""
 
             self.cursor_database.execute(create_user_table)

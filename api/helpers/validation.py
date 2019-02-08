@@ -215,21 +215,21 @@ def validate_new_incident(**kwargs):
     return None
 
 
-def is_valid_uuid(func):
-    @wraps(func)
-    def decorated_view(*args, **kwargs):
-        value = kwargs["incident_id"]
+# def is_valid_uuid(func):
+#     @wraps(func)
+#     def decorated_view(*args, **kwargs):
+#         value = kwargs["incident_id"]
 
-        try:
-            value = UUID(value, version=4)
-        except ValueError:
-            return (
-                jsonify({"status": 400, "error": "Invalid incident id"}),
-                400,
-            )
-        return func(*args, **kwargs)
+#         try:
+#             value = UUID(value, version=4)
+#         except ValueError:
+#             return (
+#                 jsonify({"status": 400, "error": "Invalid incident id"}),
+#                 400,
+#             )
+#         return func(*args, **kwargs)
 
-    return decorated_view
+#     return decorated_view
 
 
 def validate_edit_location(location):
@@ -261,13 +261,13 @@ def validate_type(inc_type):
         return "type must either be red-flag or intervention"
 
 
-def parse_incident_type(func):
-    @wraps(func)
-    def decorated_view(*args, **kwargs):
-        incident_type = kwargs["incidents"]
+# def parse_incident_type(func):
+#     @wraps(func)
+#     def decorated_view(*args, **kwargs):
+#         incident_type = kwargs["incidents"]
 
-        if incident_type == "red-flags" or incident_type == "interventions":
-            return func(*args, **kwargs)
-        abort(404)
+#         if incident_type == "red-flags" or incident_type == "interventions":
+#             return func(*args, **kwargs)
+#         abort(404)
 
-    return decorated_view
+#     return decorated_view

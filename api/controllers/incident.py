@@ -5,11 +5,11 @@ from api.helpers.responses import delete_not_allowed, wrong_status
 from api.helpers.validation import (
     validate_new_incident,
     request_data_required,
-    is_valid_uuid,
+    # is_valid_uuid,
     validate_edit_location,
     is_valid_status,
     validate_sentence,
-    parse_incident_type,
+    #parse_incident_type,
 )
 
 

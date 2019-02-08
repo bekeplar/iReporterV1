@@ -66,20 +66,20 @@ def token_required(func):
 
 def get_current_identity():
     user_id = decode_token(extract_token_from_header())["userid"]
-    sql = f"select id from users where id='{user_id}';"
-    db.cursor.execute(sql)
-    results = db.cursor.fetchone()
+    sql = f"select * from users where user_id='{user_id}';"
+    db.cursor_database.execute(sql)
+    results = db.cursor_database.fetchone()
     if results:
-        return results["id"]
+        return results["user_id"]
     else:
         abort(401)
 
 
 def is_admin_user():
     user_id = get_current_identity()
-    sql = f"select is_admin from users where id='{user_id}';"
-    db.cursor.execute(sql)
-    is_admin = db.cursor.fetchone()
+    sql = f"select is_admin from users where user_id='{user_id}';"
+    db.cursor_database.execute(sql)
+    is_admin = db.cursor_database.fetchone()
     return is_admin["is_admin"]
 
 

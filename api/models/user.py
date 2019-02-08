@@ -35,7 +35,7 @@ class User:
             f"'{first_name}', '{last_name}','{other_names}',"
             f"'{email}', '{phone_number}','{user_name}',"
             f"'{user_password}') returning "
-            "id,first_name as firstname,"
+            "user_id,first_name as firstname,"
             "last_name as lastname, "
             "other_names as othernames,"
             "email, phone_number as phoneNumber, "
@@ -69,9 +69,9 @@ class User:
 
     def get_user_details(self, user_id):
         user_sql = (
-            "SELECT id, user_name,first_name,last_name,other_names, "
+            "SELECT user_id, user_name,first_name,last_name,other_names, "
             "email,is_admin FROM users "
-            f"WHERE id='{user_id}';"
+            f"WHERE user_id='{user_id}';"
         )
         self.db.cursor_database.execute(user_sql)
         user_details = self.db.cursor_database.fetchone()
@@ -79,7 +79,7 @@ class User:
 
     def is_valid_credentials(self, user_name, user_password):
         sql = (
-            "SELECT id,user_name ,user_password FROM users where user_name="
+            "SELECT user_id,user_name ,user_password FROM users where user_name="
             f"'{user_name}';"
         )
         self.db.cursor_database.execute(sql)
@@ -93,7 +93,7 @@ class User:
             user_db_details.get("user_password"), user_password
         )
         ):
-            user_id = user_db_details.get("id")
+            id = user_db_details.get("user_id")
 
-            return user_id
+            return id
         return None

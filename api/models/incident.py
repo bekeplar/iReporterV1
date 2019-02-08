@@ -14,7 +14,7 @@ class Incident:
         images = kwargs.get("images")
         videos = kwargs.get("videos")
         sql = (
-            "INSERT INTO public.incidents ("
+            "INSERT INTO incidents ("
             "title, comment, location, created_by, type"
             ")VALUES ("
             f"'{title}', '{comment}','{location}',"
@@ -30,7 +30,7 @@ class Incident:
     def insert_images(self, incident_id, images):
         for image in images:
             sql = (
-                "INSERT INTO public.incident_images ("
+                "INSERT INTO incident_images ("
                 "incident_id,image_url) VALUES ("
                 f"'{incident_id}','{image}');"
             )
@@ -39,7 +39,7 @@ class Incident:
     def insert_videos(self, incident_id, videos):
         for video in videos:
             sql = (
-                "INSERT INTO public.incident_videos ("
+                "INSERT INTO incident_videos ("
                 "incident_id,video_url) VALUES ("
                 f"'{incident_id}','{video}');"
             )
@@ -53,14 +53,14 @@ class Incident:
         return self.get_all_records_for_a_specific_user(inc_type, user_id)
 
     def get_all_records(self, inc_type):
-        sql = f"SELECT * FROM incident_view WHERE type='{inc_type}';"
-        self.db.cursor.execute(sql)
+        sql = f"SELECT * FROM incidents WHERE type='{inc_type}';"
+        self.db.cursor_database.execute(sql)
         return self.db.cursor_database.fetchall()
 
     def get_all_records_for_a_specific_user(self, inc_type, user_id):
         sql = (
-            "SELECT * FROM incident_view WHERE "
-            f"created_by='{user_id}' AND type='{inc_type}';"
+            "SELECT * FROM incidents WHERE "
+            f"created_by='{user_id}' AND incident_type='{inc_type}';"
         )
         self.db.cursor_database.execute(sql)
 
@@ -83,15 +83,15 @@ class Incident:
 
     def get_incident_by_id(self, inc_id):
 
-        sql = f"SELECT * FROM public.incident_view " f"WHERE id='{inc_id}';"
+        sql = f"SELECT * FROM incidents" f"WHERE incident_id='{inc_id}';"
         self.db.cursor_database.execute(sql)
         return self.db.cursor_database.fetchone()
 
     def get_incident_by_id_and_type(self, inc_type, inc_id):
 
         sql = (
-            f"SELECT * FROM public.incident_view "
-            f"WHERE id='{inc_id}' AND type='{inc_type}';"
+            f"SELECT * FROM incidents"
+            f"WHERE incident_id='{inc_id}' AND incident_type='{inc_type}';"
         )
         self.db.cursor_database.execute(sql)
         return self.db.cursor_database.fetchone()
@@ -100,7 +100,7 @@ class Incident:
         location = (location[0], location[1])
         sql = (
             f"UPDATE incidents SET location='{location}' "
-            f"WHERE id='{inc_id}' returning id,location;"
+            f"WHERE incident_id='{inc_id}' returning id,location;"
         )
         self.db.cursor_database.execute(sql)
         return self.db.cursor_database.fetchone()
@@ -109,7 +109,7 @@ class Incident:
         comment = comment.strip()
         sql = (
             f"UPDATE incidents SET comment='{comment}' "
-            f"WHERE id='{inc_id}' returning id,comment;"
+            f"WHERE incident_id='{inc_id}' returning id,comment;"
         )
         self.db.cursor_database.execute(sql)
         return self.db.cursor_database.fetchone()
@@ -118,7 +118,7 @@ class Incident:
         status = status.strip().lower().capitalize()
         sql = (
             f"UPDATE incidents SET status='{status}' "
-            f"WHERE id='{inc_id}' returning id,status;"
+            f"WHERE incident_id='{inc_id}' returning id,status;"
         )
         self.db.cursor_database.execute(sql)
         return self.db.cursor_database.fetchone()
@@ -126,7 +126,7 @@ class Incident:
     def delete_incident_record(self, inc_id, inc_type, user_id):
         sql = (
             f"DELETE FROM incidents WHERE created_by='{user_id}' "
-            f"AND id='{inc_id}' AND type='{inc_type}' returning *;"
+            f"AND incident_id='{inc_id}' AND incident_type='{inc_type}' returning *;"
         )
         self.db.cursor_database.execute(sql)
 
