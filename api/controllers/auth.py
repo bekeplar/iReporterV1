@@ -78,14 +78,14 @@ class UserController():
                 ),
                 400,
             )
-
+        # Get user credentials
         user_credentials = json.loads(request.data)
         response = None
         try:
             user_name = user_credentials["username"]
             user_password = user_credentials["password"]
 
-            # submit credentials
+            # submit user details as required
             user_id = user_obj.is_valid_credentials(user_name, user_password)
             if user_id:
                 response = (

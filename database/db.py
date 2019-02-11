@@ -1,6 +1,5 @@
 from os import environ
 from flask import current_app as app
-from urllib.parse import urlparse
 import uuid
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -28,7 +27,7 @@ class DatabaseConnection:
             self.database_connect.autocommit = True
             self.cursor_database = self.database_connect.cursor(cursor_factory=RealDictCursor)
             print('Connected to the database successfully.')
-            print(self.database_name)
+           
             
             create_user_table = """CREATE TABLE IF NOT EXISTS users
             (

@@ -11,12 +11,13 @@ from database.db import DatabaseConnection
 
 
 class User:
-    """class defines the user data structure"""
+    """class defines the user objects structure"""
 
     def __init__(self, **kwargs):
         self.db = DatabaseConnection()
 
     def insert_user(self, **kwargs):
+        """User class method for adding new user to the users database"""
         first_name = kwargs["first_name"]
         last_name = kwargs["last_name"]
         other_names = kwargs["other_names"]
@@ -47,7 +48,7 @@ class User:
         return new_user
 
     def check_if_user_exists(self, user_name, email, phone_number):
-        """user_name and email must be unique"""
+        """Making sure that user_name and email are unique"""
         user_exists_sql = (
             "SELECT user_name,email, phone_number from users where "
             f"user_name ='{user_name}' OR email='{email}' OR"
@@ -68,8 +69,9 @@ class User:
         return error
 
     def get_user_details(self, user_id):
+        """Function for fetching a known user's details"""
         user_sql = (
-            "SELECT user_id, user_name,first_name,last_name,other_names, "
+            "SELECT user_id, user_name, first_name, last_name, other_names, "
             "email,is_admin FROM users "
             f"WHERE user_id='{user_id}';"
         )
@@ -78,6 +80,7 @@ class User:
         return user_details
 
     def is_valid_credentials(self, user_name, user_password):
+        """Function for verrifying user credentials"""
         sql = (
             "SELECT user_id,user_name ,user_password FROM users where user_name="
             f"'{user_name}';"

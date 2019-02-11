@@ -7,9 +7,5 @@ omit =
     */home/travis/virtualenv/*
     */usr/lib/python3/*
     */__init__.py
-    */tests/*
-    */api/models/*
-    */api/views/*
-    */api/helpers/*
-    */api/app.py
-    */database/db.py
+    
+    

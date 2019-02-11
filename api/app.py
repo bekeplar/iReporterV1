@@ -33,7 +33,7 @@ def create_app(config_name):
         return (
             jsonify(
                 {
-                    "error": "You are not authorized to access this resource",
+                    "error": "Access Denied",
                     "status": 401,
                 }
             ),

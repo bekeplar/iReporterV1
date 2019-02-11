@@ -5,11 +5,9 @@ from api.helpers.responses import delete_not_allowed, wrong_status
 from api.helpers.validation import (
     validate_new_incident,
     request_data_required,
-    # is_valid_uuid,
     validate_edit_location,
     is_valid_status,
     validate_sentence,
-    #parse_incident_type,
 )
 
 
@@ -70,9 +68,8 @@ class IncidentController:
         return jsonify({"status": 200, "data": results}), 200
 
     def get_a_specific_incident(self, incident_id, ireporter):
-        inc_type = ireporter[:-1]
         results = incident_obj.get_an_incident_record_(
-        inc_type=inc_type, inc_id=incident_id
+        inc_type=ireporter, inc_id=incident_id
         )
 
         response = None
@@ -86,7 +83,7 @@ class IncidentController:
                 jsonify(
                     {
                         "status": 404,
-                        "error": inc_type
+                        "error": ireporter
                                 + " record with specified id does not exist",
                     }
                 ),
@@ -96,11 +93,10 @@ class IncidentController:
         return response
 
     def delete_record(self, incident_id, ireporter):
-        incident_type = ireporter[:-1]
         response = None
 
         results = incident_obj.get_incident_by_id_and_type(
-            inc_type=incident_type, inc_id=incident_id
+            inc_type=ireporter, inc_id=incident_id
         )
 
         if not results:
@@ -108,7 +104,7 @@ class IncidentController:
                 jsonify(
                     {
                         "status": 404,
-                        "error": incident_type + " record does not exist",
+                        "error": ireporter + " record does not exist",
                     }
                 ),
                 404,
@@ -119,7 +115,7 @@ class IncidentController:
         elif results["status"].lower() == "draft":
             delete_id = incident_obj.delete_incident_record(
                 inc_id=incident_id,
-                inc_type=incident_type,
+                inc_type=ireporter,
                 user_id=get_current_identity(),
             )
 
@@ -130,7 +126,7 @@ class IncidentController:
                         "data": [
                             {
                                 "incident": delete_id,
-                                "success": incident_type
+                                "success": ireporter
                                         + " record has been deleted",
                             }
                         ],
@@ -153,7 +149,7 @@ class IncidentController:
             )
         return response
 
-    def edit_red_flag_comment(self, incident_id, ireporter):
+    def edit_comment_of_incident(self, incident_id, ireporter):
         inc_type = ireporter[:-1]
 
         data = request.get_json(force=True)
@@ -162,7 +158,7 @@ class IncidentController:
         incident_type = inc_type
 
         incident_results = incident_obj.get_incident_by_id_and_type(
-            inc_type=incident_type, inc_id=incident_id
+            inc_type=ireporter, inc_id=incident_id
         )
 
         response = None
@@ -171,7 +167,7 @@ class IncidentController:
                 jsonify(
                     {
                         "status": 404,
-                        "error": incident_type
+                        "error": ireporter
                                 + " record with specified id does not exist",
                     }
                 ),
@@ -236,7 +232,7 @@ class IncidentController:
 
         incident_id = incident_id
         incident_results = incident_obj.get_incident_by_id_and_type(
-            inc_type=incident_type, inc_id=incident_id
+            inc_type=ireporter, inc_id=incident_id
         )
 
         response = None
@@ -245,7 +241,7 @@ class IncidentController:
                 jsonify(
                     {
                         "status": 404,
-                        "error": incident_type
+                        "error": ireporter
                                 + " record with specified id does not exist",
                     }
                 ),
@@ -286,7 +282,7 @@ class IncidentController:
         inc_type = ireporter[:-1]
 
         results = incident_obj.get_incident_by_id_and_type(
-            inc_id=incident_id, inc_type=inc_type
+            inc_id=incident_id, inc_type=ireporter
         )
         response = None
 
@@ -295,7 +291,7 @@ class IncidentController:
                 jsonify(
                     {
                         "status": 404,
-                        "error": inc_type
+                        "error": ireporter
                                 + " record with specified id does not exist",
                     }
                 ),
