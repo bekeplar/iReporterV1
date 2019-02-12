@@ -52,7 +52,7 @@ class IncidentController:
                         "data": [
                             {
                                 incident_type: new_db_incident_details,
-                                "success": "Created " + incident_type + " record",
+                                "success": f"Created {ireporter} record",
                             }
                         ],
                     }
@@ -63,9 +63,11 @@ class IncidentController:
     
 
     def get_incidents(self, ireporter):
-        results = incident_obj.get_all_incident_records(inc_type=ireporter[:-1])
+        results = incident_obj.get_all_incident_records(inc_type=ireporter)
 
-        return jsonify({"status": 200, "data": results}), 200
+        return jsonify({"status": 200,
+               "data": results, 
+               "message": f"No {ireporter} reported yet"}), 200
 
     def get_a_specific_incident(self, incident_id, ireporter):
         results = incident_obj.get_an_incident_record_(
@@ -83,8 +85,7 @@ class IncidentController:
                 jsonify(
                     {
                         "status": 404,
-                        "error": ireporter
-                                + " record with specified id does not exist",
+                        "error": f"{ireporter} record with specified id does not exist"
                     }
                 ),
                 404,
@@ -104,7 +105,7 @@ class IncidentController:
                 jsonify(
                     {
                         "status": 404,
-                        "error": ireporter + " record does not exist",
+                        "error": f"{ireporter} record does not exist",
                     }
                 ),
                 404,
@@ -126,8 +127,7 @@ class IncidentController:
                         "data": [
                             {
                                 "incident": delete_id,
-                                "success": ireporter
-                                        + " record has been deleted",
+                                "success": f"{ireporter} record has been deleted"
                             }
                         ],
                     }
@@ -150,7 +150,7 @@ class IncidentController:
         return response
 
     def edit_comment_of_incident(self, incident_id, ireporter):
-        inc_type = ireporter[:-1]
+        inc_type = ireporter
 
         data = request.get_json(force=True)
         comment = data.get("comment")
@@ -167,8 +167,8 @@ class IncidentController:
                 jsonify(
                     {
                         "status": 404,
-                        "error": ireporter
-                                + " record with specified id does not exist",
+                        "error": f"{ireporter} record with specified id does not exist",
+                                
                     }
                 ),
                 404,
@@ -181,7 +181,7 @@ class IncidentController:
                 jsonify(
                     {
                         "status": 401,
-                        "error": "You can only edit comments created by you",
+                        "error": "Only the author can update an incident record",
                     }
                 ),
                 401,
@@ -212,9 +212,7 @@ class IncidentController:
                             {
                                 "id": updated_record["id"],
                                 "comment": updated_record["comment"],
-                                "success": "Updated "
-                                        + incident_type
-                                        + " recordâ€™s comment",
+                                "success": f"Updated {incident_type} record's comment",
                             }
                         ],
                     }
@@ -241,8 +239,7 @@ class IncidentController:
                 jsonify(
                     {
                         "status": 404,
-                        "error": ireporter
-                                + " record with specified id does not exist",
+                        "error": f"{ireporter} record with specified id does not exist",
                     }
                 ),
                 404,
@@ -264,9 +261,7 @@ class IncidentController:
                             {
                                 "id": updated_record["id"],
                                 "status": updated_record["status"],
-                                "success": "Updated "
-                                        + incident_type
-                                        + " recordâ€™s status",
+                                "success": f"Updated {incident_type} record's status",
                             }
                         ],
                     }
@@ -279,7 +274,6 @@ class IncidentController:
     def edit_incident_location(self, incident_id, ireporter):
         data = request.get_json(force=True)
         is_invalid_location = validate_edit_location(data.get("location"))
-        inc_type = ireporter[:-1]
 
         results = incident_obj.get_incident_by_id_and_type(
             inc_id=incident_id, inc_type=ireporter
@@ -291,8 +285,7 @@ class IncidentController:
                 jsonify(
                     {
                         "status": 404,
-                        "error": ireporter
-                                + " record with specified id does not exist",
+                        "error": f"{ireporter} record with specified id does not exist",
                     }
                 ),
                 404,
@@ -322,9 +315,7 @@ class IncidentController:
                             {
                                 "id": updated_record["id"],
                                 "location": updated_record["location"],
-                                "success": "Updated "
-                                        + inc_type
-                                        + " recordâ€™s location",
+                                "success": f"Updated {ireporter} record's location",
                             }
                         ],
                     }

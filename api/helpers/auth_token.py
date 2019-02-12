@@ -1,4 +1,4 @@
-"""File for all authentication code"""
+"""File for all user authentication code"""
 
 import datetime
 import jwt

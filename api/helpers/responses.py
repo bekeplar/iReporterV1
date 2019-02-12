@@ -17,7 +17,7 @@ duplicate_email = "Email address already has an account"
 duplicate_user_name = "Username already registered"
 duplicate_phone_number = "phoneNumber already in use"
 
-invalid_token_message = "Invalid Token, verification failed"
+invalid_token_message = "Provide a valid Token, verification failed"
 expired_token_message = "Token has expired"
 
 wrong_status = (
