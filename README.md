@@ -7,4 +7,3 @@ any/every citizen to bring any form of corruption to the notice of appropriate a
 [![Build Status](https://travis-ci.org/bekeplar/iReporterV1.svg?branch=develop)](https://travis-ci.org/bekeplar/iReporterV1)
 [![Coverage Status](https://coveralls.io/repos/github/bekeplar/iReporterV1/badge.svg?branch=develop)](https://coveralls.io/github/bekeplar/iReporterV1?branch=develop)
 [![Maintainability](https://api.codeclimate.com/v1/badges/5767084e8421e1056f25/maintainability)](https://codeclimate.com/github/bekeplar/iReporterV1/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/5767084e8421e1056f25/test_coverage)](https://codeclimate.com/github/bekeplar/iReporterV1/test_coverage)
