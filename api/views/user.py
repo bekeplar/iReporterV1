@@ -1,0 +1,15 @@
+from api.helpers.validation import validate_new_user, sign_up_data_required
+from flask import Blueprint, jsonify, request, json
+from api.controllers.auth import UserController
+
+users_bp = Blueprint("users", __name__, url_prefix="/api/v1")
+
+user_controller = UserController()
+@users_bp.route("/auth/signup", methods=["POST"])
+@sign_up_data_required
+def register_user():
+    return user_controller.signup()
+
+@users_bp.route("/auth/login", methods=["POST"])
+def login_user():
+    return user_controller.login()
