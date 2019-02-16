@@ -21,15 +21,15 @@ class IncidentController:
     def new_incident(self, data, ireporter):
         if not request.data:
             return (
-                jsonify({"error": "Please provide incident Data", "status": 400}),
+                jsonify({"error": "Please provide some incident data", "status": 400}),
                 400,
             )
+        data = request.get_json(force=True)
+
         new_incident_data = {
             "title": data.get("title"),
             "location": data.get("location"),
             "comment": data.get("comment"),
-            "images": data.get("Images"),
-            "videos": data.get("Videos"),
             "inc_type": data.get("type"),
         }
 
@@ -44,7 +44,6 @@ class IncidentController:
             new_db_incident_details = incident_obj.insert_incident(
                 **new_incident_data
             )
-
             response = (
                 jsonify(
                     {
@@ -63,14 +62,14 @@ class IncidentController:
     
 
     def get_incidents(self, ireporter):
-        results = incident_obj.get_all_incident_records(inc_type=ireporter)
+        results = incident_obj.get_all_records(inc_type=ireporter)
 
         return jsonify({"status": 200,
                "data": results, 
-               "message": f"No {ireporter} reported yet"}), 200
+               "message": f"{ireporter} records found"}), 200
 
     def get_a_specific_incident(self, incident_id, ireporter):
-        results = incident_obj.get_an_incident_record_(
+        results = incident_obj.get_incident_by_id_and_type(
         inc_type=ireporter, inc_id=incident_id
         )
 

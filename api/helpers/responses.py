@@ -19,6 +19,9 @@ duplicate_phone_number = "phoneNumber already in use"
 
 invalid_token_message = "Provide a valid Token, verification failed"
 expired_token_message = "Token has expired"
+auth_response = (
+    "Please login in again or sign up an account to access this resource"
+)
 
 wrong_status = (
     "Status must either be 'resolved','under investigation' or 'rejected'"

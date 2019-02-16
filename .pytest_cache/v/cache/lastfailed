@@ -1,0 +1,11 @@
+{
+  "tests/test_create_redflag.py::CreateReadFlagTestCase::test_returns_error_if_the_record_type_is_empty": true,
+  "tests/test_create_redflag.py::TestRedFlagView::test_add_bad_red_flag": true,
+  "tests/test_create_redflag.py::TestRedFlagView::test_add_proper_red_flag": true,
+  "tests/test_create_redflag.py::TestRedFlagView::test_get_all_red_flags_as_admin": true,
+  "tests/test_create_redflag.py::TestRedFlagView::test_get_all_redflags_as_non_admin": true,
+  "tests/test_create_redflag.py::TestRedFlagView::test_get_non_existent_red_flag": true,
+  "tests/test_create_redflag.py::TestRedFlagView::test_get_red_flag": true,
+  "tests/test_create_redflag.py::TestRedFlagView::test_get_red_flag_": true,
+  "tests/test_get_redflag.py::test_returns_all_incident_records": true
+}

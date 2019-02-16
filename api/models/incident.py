@@ -3,7 +3,7 @@ from database.db import DatabaseConnection
 
 
 class Incident:
-    """Class that will contain all incident objects """
+    """Class that will contain incident objects """
     def __init__(self):
         self.db = DatabaseConnection()
 
@@ -13,21 +13,15 @@ class Incident:
         comment = kwargs.get("comment")
         location = (kwargs.get("location")[0], kwargs.get("location")[1])
         created_by = kwargs.get("user_id")
-        images = kwargs.get("images")
-        videos = kwargs.get("videos")
+        status = "draft"
         sql = (
             "INSERT INTO incidents ("
-            "title, comment, location, created_by, type"
+            "title, comment, location, created_by, status, incident_type"
             ")VALUES ("
             f"'{title}', '{comment}','{location}',"
-            f"'{created_by}', '{inc_type}') returning id;"
+            f"'{created_by}', '{status}' ,'{inc_type}');"
         )
         self.db.cursor_database.execute(sql)
-        last_insert_id = self.db.cursor_database.fetchone()
-        new_incident_id = last_insert_id.get("id")
-        self.insert_images(new_incident_id, images)
-        self.insert_videos(new_incident_id, videos)
-        return self.get_incident_by_id(new_incident_id)
 
     def insert_images(self, incident_id, images):
         """Function that adds images to the database"""

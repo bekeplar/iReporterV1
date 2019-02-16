@@ -1,111 +1,73 @@
-# import unittest
+import unittest
+import json
+from flask import Response, json
+from api.app import create_app
+from database.db import DatabaseConnection
+from api.models.user import User
+from api.models.incident import Incident
 
-# from flask import json
 
-# from database.db import DatabaseConnection
-# from api.models.incident import Incident
-# from api.models.incident import Incident
-# from api.models.user import User
-# from tests.base_test import BaseTest
+class CreateReadFlagTestCase(unittest.TestCase):
 
-# from api.app import create_app
-
-# class RedflagTestCase(BaseTest):
-#     def test_returns_error_if_the_record_type_is_empty(self):
-#         data = {
-#                 "incident_type":"",
-#                 "location":[3333.33, 444.1],
-#                 "comment": "its terrible",
-#                 }
-#         res = self.client.post('/api/v1/redflags', content_type="application/json",
-#             data=json.dumps(data), headers = self.user_header())
-#         response_data = json.loads(res.data.decode())
-#         self.assertEqual(res.status_code,400)
-#         self.assertEqual(response_data['status'], 400)
-#         self.assertIsInstance(response_data, dict)
-#         self.assertEqual(response_data['error'], "A required field is either missing or empty")
-
-#     def test_returns_error_if_the_record_type_is_invalid(self):
-#         data = {
-#                 "incident_type":"red",
-#                 "location":[3333.33, 444.1],
-#                 "comment": "its terrible",
-#                 }
-#         res = self.client.post('/api/v1/redflags', content_type="application/json",
-#             data=json.dumps(data), headers = self.user_header())
-#         response_data = json.loads(res.data.decode())
-#         self.assertEqual(res.status_code,400)
-#         self.assertEqual(response_data['status'], 400)
-#         self.assertIsInstance(response_data, dict)
-#         self.assertEqual(response_data['error'], "type must a string and must be red-flag or intervention")
+    def setUp(self):
+        """initializing method for a unit test"""
+        self.app = create_app("Testing")
+        self.client = self.app.test_client(self)
+        self.user_obj = User()
+        self.incident_obj = Incident()
+        self.db = DatabaseConnection()
         
-#     def test_returns_error_if_the_record_type_is_not_a_string(self):
-#         data = {
-#                 "incident_type":9,
-#                 "location":[3333.33, 444.1],
-#                 "comment": "its terrible",
-#                 }
-#         res = self.client.post('/api/v1/redflags', content_type="application/json",
-#             data=json.dumps(data), headers = self.user_header())
-#         response_data = json.loads(res.data.decode())
-#         self.assertEqual(res.status_code,400)
-#         self.assertEqual(response_data['status'], 400)
-#         self.assertIsInstance(response_data, dict)
-#         self.assertEqual(response_data['error'], "type must a string and must be red-flag or intervention")
+        self.user = {
+                "firstname": "Bekalaze",
+                "lastname": "Joseph",
+                "othernames": "Beka",
+                "username": "bekeplar",
+                "email": "bekeplar@gmail.com",
+                "password": "Bekeplar1234",
+                "phoneNumber": "0789057968"
+                }
+        self.user_login = {
+            'username': 'bekeplar',
+            'password': 'Bekeplar1234'
+        }
 
-#     def test_return_error_if_location_is_invalid(self):
-#         data = {
-#                 "incident_type":"red-flag",
-#                 "location":"2222222",
-#                 "comment": "its terrible",
-#                 } 
-#         res = self.client.post('/api/v1/redflags', content_type="application/json",
-#             data=json.dumps(data), headers = self.user_header())
-#         response_data = json.loads(res.data.decode())
-#         self.assertEqual(res.status_code,400)
-#         self.assertEqual(response_data['status'], 400)
-#         self.assertIsInstance(response_data, dict)
-#         self.assertEqual(response_data['error'],"Location field only takes in a list of valid Lat and Long cordinates")
+    def test_create_redflag(self):
+        self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user))
+        response = self.client.post('api/v1/auth/login', content_type='application/json', data=json.dumps(self.user_login)
+        )
+        access_token = json.loads(response.data.decode())
+        self.assertEqual(response.status_code, 200)
+        data = {
+                "title": "bribery",
+                "location": [60, 120],
+                "comment": "These are serious allegations",
+                "created_by": 1,
+                "type": "redflag"
+                }
+        res = self.client.post('/api/v1/redflags', content_type="application/json",
+            data=json.dumps(data), headers={'Authorization': f'Bearer {access_token}'})
+        response_data = json.loads(res.data.decode())
+        self.assertEqual(res.status_code,401)
+        self.assertEqual(response_data['status'], 401)
+        self.assertIsInstance(response_data, dict)
 
-#     def test_returns_error_if_comment_is_not_valid(self):
-#         data = {
-#                 "incident_type":"red-flag",
-#                 "location":[3333.33, 444.1],
-#                 "comment": 99,
-#                 }
-#         res = self.client.post('/api/v1/redflags', content_type="application/json",
-#             data=json.dumps(data), headers = self.user_header())
-#         response_data = json.loads(res.data.decode())
-#         self.assertEqual(res.status_code,400)
-#         self.assertEqual(response_data['status'], 400)
-#         self.assertIsInstance(response_data, dict)
-#         self.assertEqual(response_data['error'], "comment must be a string")
-
-#     def test_returns_error_if_unauthorised_user_tries_to_post_record(self):
-#         data = {
-#             "incident_type":"red-flag",
-#             "location":[3333.33, 444.1],
-#             "comment": "the pot holes are many",
-#             }
-#         res = self.client.post('/api/v1/redflags', content_type="application/json",
-#             data=json.dumps(data), headers = self.admin_header())
-#         response_data = json.loads(res.data.decode())
-#         self.assertEqual(res.status_code,403)
-#         self.assertEqual(response_data['status'], 403)
-#         self.assertIsInstance(response_data, dict)
-#         self.assertEqual(response_data['error'], "You do not have permission to perform this action")
-
-#     def test_posts_incident_record(self):
-#         data = {
-#             "incident_type":"red-flag",
-#             "location":[3333.33, 444.1],
-#             "comment": "the pot holes are many",
-#             }
-#         res = self.client.post('/api/v1/redflags', content_type="application/json",
-#             data=json.dumps(data), headers = self.user_header())
-#         response_data = json.loads(res.data.decode())
-#         self.assertEqual(res.status_code, 201)
-#         self.assertEqual(response_data['status'], 201)
-#         self.assertIsInstance(response_data, dict)
-#         self.assertIn("the pot holes are many", str(response_data['data']))
-#         self.assertEqual(response_data['message'], "created red-flag record successfuly")
+    def test_create_redflag_missing_fields(self):
+        self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user))
+        response = self.client.post('api/v1/auth/login', content_type='application/json', data=json.dumps(self.user_login)
+        )
+        access_token = json.loads(response.data.decode())
+        self.assertEqual(response.status_code, 200)
+        data = {
+                "title": "",
+                "location": "",
+                "comment": "",
+                "created_by": "",
+                "type": ""
+                }
+        res = self.client.post('/api/v1/redflags', content_type="application/json",
+            data=json.dumps(data), headers={'Authorization': f'Bearer {access_token}'})
+        response_data = json.loads(res.data.decode())
+        self.assertEqual(res.status_code,401)
+        self.assertEqual(response_data['status'], 401)
+        self.assertIsInstance(response_data, dict)
+    
