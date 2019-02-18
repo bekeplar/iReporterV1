@@ -1,5 +1,9 @@
-from api.helpers.auth_token import get_current_identity, is_admin_user
+from api.utilitiez.auth_token import get_current_identity, is_admin_user
 from database.db import DatabaseConnection
+from api.utilitiez.responses import (
+    duplicate_title,
+    duplicate_comment,
+)
 
 
 class Incident:
@@ -7,7 +11,7 @@ class Incident:
     def __init__(self):
         self.db = DatabaseConnection()
 
-    def insert_incident(self, inc_type="red-flag", **kwargs):
+    def create_incident(self, inc_type="red-flag", **kwargs):
         """Method for inserting a new incident in the database"""
         title = kwargs.get("title")
         comment = kwargs.get("comment")
@@ -133,5 +137,22 @@ class Incident:
             f"AND incident_id='{inc_id}' AND incident_type='{inc_type}' returning *;"
         )
         self.db.cursor_database.execute(sql)
-
         return self.db.cursor_database.fetchone()
+
+    def check_incident_exists(self, title, comment):
+        """Making sure that title and comment are unique"""
+        incident_exists_query = (
+            "SELECT title, comment from incidents where "
+            f"title ='{title}' OR comment='{comment}';"
+        )
+        self.db.cursor_database.execute(incident_exists_query)
+        incident_exists = self.db.cursor_database.fetchone()
+        error = {}
+
+        if incident_exists and incident_exists.get("title") == title:
+            error["title"] = duplicate_title
+
+        if incident_exists and incident_exists.get("comment") == comment:
+            error["comment"] = duplicate_comment
+        return error
+

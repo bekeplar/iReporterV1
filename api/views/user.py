@@ -1,4 +1,4 @@
-from api.helpers.validation import validate_new_user, sign_up_data_required
+from api.utilitiez.validation import validate_new_user, sign_up_data_required
 from flask import Blueprint, jsonify, request, json
 from api.controllers.auth import UserController
 

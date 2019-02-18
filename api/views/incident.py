@@ -1,12 +1,12 @@
 from flask import Blueprint, jsonify, request
 
-from api.helpers.auth_token import (
+from api.utilitiez.auth_token import (
     token_required,
     non_admin,
     admin_required,
     get_current_identity,
 )
-from api.helpers.validation import (
+from api.utilitiez.validation import (
     request_data_required
     )
 from api.controllers.incident import IncidentController

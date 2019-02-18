@@ -1,8 +1,8 @@
 from flask import Blueprint, jsonify, request
 from api.models.incident import Incident
-from api.helpers.auth_token import get_current_identity
-from api.helpers.responses import delete_not_allowed, wrong_status
-from api.helpers.validation import (
+from api.utilitiez.auth_token import get_current_identity
+from api.utilitiez.responses import delete_not_allowed, wrong_status
+from api.utilitiez.validation import (
     validate_new_incident,
     request_data_required,
     validate_edit_location,
@@ -24,7 +24,7 @@ class IncidentController:
                 jsonify({"error": "Please provide some incident data", "status": 400}),
                 400,
             )
-        data = request.get_json(force=True)
+        data = request.get_json()
 
         new_incident_data = {
             "title": data.get("title"),
@@ -38,19 +38,23 @@ class IncidentController:
         incident_type = new_incident_data.get("inc_type")
         if not_valid:
             response = not_valid
+        incident_exists = incident_obj.check_incident_exists(
+            new_incident_data["title"], new_incident_data["comment"]
+        )
+        response = None
+        if incident_exists:
+            response = jsonify({"error": incident_exists, "status": 409}), 409
+
         else:
             new_incident_data["user_id"] = get_current_identity()
-
-            new_db_incident_details = incident_obj.insert_incident(
-                **new_incident_data
-            )
+            new_incident = incident_obj.create_incident(**new_incident_data)
             response = (
                 jsonify(
                     {
                         "status": 201,
                         "data": [
                             {
-                                incident_type: new_db_incident_details,
+                                incident_type: new_incident,
                                 "success": f"Created {ireporter} record",
                             }
                         ],

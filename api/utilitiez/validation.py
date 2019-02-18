@@ -2,8 +2,7 @@
 import re
 from flask import jsonify, request, abort
 from functools import wraps
-
-from api.helpers.responses import (
+from api.utilitiez.responses import (
     wrong_password,
     wrong_username,
     wrong_email,

@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request, json
 
-from api.helpers.auth_token import encode_token
-from api.helpers.validation import validate_new_user
+from api.utilitiez.auth_token import encode_token
+from api.utilitiez.validation import validate_new_user
 
 from api.models.user import User
 

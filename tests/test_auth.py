@@ -283,7 +283,7 @@ class UserTestCase(unittest.TestCase):
         self.assertIsInstance(response_data, dict)
        
 
-    def test_returns_error_on_failure_to_login(self):
+    def test_returns_error_on_invalid_login_details(self):
         data = {
                 "firstname": "Bekalaze",
                 "lastname": "Joseph",
@@ -304,4 +304,18 @@ class UserTestCase(unittest.TestCase):
         self.assertEqual(response_data['status'], 401)
         self.assertIsInstance(response_data, dict)
 
+    def test_returns_error_if_missing_key(self):
+        data = {
+                "firstname": "Bekalaze",
+                "lastname": "Joseph",
+                "othernames": "Beka",
+                "email": "bekeplar@gmail.com",
+                "password": "Bekeplar1234",
+                "phoneNumber": "0789057968"
+            }
+        res = self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(data))
+        response_data = json.loads(res.data.decode())
+        self.assertEqual(res.status_code,422)
+        self.assertEqual(response_data['status'], 422)
+        self.assertIsInstance(response_data, dict)
         
