@@ -1,8 +1,8 @@
 from flask import Blueprint, jsonify, request
 from api.models.incident import Incident
-from api.helpers.auth_token import get_current_identity
-from api.helpers.responses import delete_not_allowed, wrong_status
-from api.helpers.validation import (
+from api.utilitiez.auth_token import get_current_identity
+from api.utilitiez.responses import delete_not_allowed, wrong_status
+from api.utilitiez.validation import (
     validate_new_incident,
     request_data_required,
     validate_edit_location,
@@ -21,15 +21,16 @@ class IncidentController:
     def new_incident(self, data, ireporter):
         if not request.data:
             return (
-                jsonify({"error": "Please provide incident Data", "status": 400}),
+                jsonify({"error": "Please provide some incident data", "status": 400}),
                 400,
             )
+        data = request.get_json()
+
         new_incident_data = {
             "title": data.get("title"),
             "location": data.get("location"),
             "comment": data.get("comment"),
-            "images": data.get("Images"),
-            "videos": data.get("Videos"),
+            "created_by": data.get("user_id"),
             "inc_type": data.get("type"),
         }
 
@@ -38,20 +39,23 @@ class IncidentController:
         incident_type = new_incident_data.get("inc_type")
         if not_valid:
             response = not_valid
+        incident_exists = incident_obj.check_incident_exists(
+            new_incident_data["title"], new_incident_data["comment"]
+        )
+        response = None
+        if incident_exists:
+            response = jsonify({"error": incident_exists, "status": 409}), 409
+
         else:
             new_incident_data["user_id"] = get_current_identity()
-
-            new_db_incident_details = incident_obj.insert_incident(
-                **new_incident_data
-            )
-
+            new_incident = incident_obj.create_incident(**new_incident_data)
             response = (
                 jsonify(
                     {
                         "status": 201,
                         "data": [
                             {
-                                incident_type: new_db_incident_details,
+                                incident_type: new_incident,
                                 "success": f"Created {ireporter} record",
                             }
                         ],
@@ -63,14 +67,14 @@ class IncidentController:
     
 
     def get_incidents(self, ireporter):
-        results = incident_obj.get_all_incident_records(inc_type=ireporter)
+        results = incident_obj.get_all_records(inc_type=ireporter)
 
         return jsonify({"status": 200,
                "data": results, 
-               "message": f"No {ireporter} reported yet"}), 200
+               "message": f"{ireporter} records found"}), 200
 
     def get_a_specific_incident(self, incident_id, ireporter):
-        results = incident_obj.get_an_incident_record_(
+        results = incident_obj.get_incident_by_id_and_type(
         inc_type=ireporter, inc_id=incident_id
         )
 

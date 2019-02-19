@@ -2,7 +2,7 @@
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from api.helpers.responses import (
+from api.utilitiez.responses import (
     duplicate_email,
     duplicate_user_name,
     duplicate_phone_number,

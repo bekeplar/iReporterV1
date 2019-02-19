@@ -1,9 +1,29 @@
-venv
-__pycache__
-.pyc
-.idea
+.pytest_cache
 .vscode
 .env
-.swp
+venv
+# Byte-compiled / optimized / DLL files
+.pyc
+__pycache__/
+__pycache__
+*.py[cod]
+*$py.class
+# C extensions
+*.so
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 htmlcov
-.coverage

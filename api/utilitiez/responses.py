@@ -16,9 +16,14 @@ wrong_name = (
 duplicate_email = "Email address already has an account"
 duplicate_user_name = "Username already registered"
 duplicate_phone_number = "phoneNumber already in use"
+duplicate_comment = "incident comment already reported"
+duplicate_title = "incident title already reported"
 
 invalid_token_message = "Provide a valid Token, verification failed"
 expired_token_message = "Token has expired"
+auth_response = (
+    "Please login in again or sign up an account to access this resource"
+)
 
 wrong_status = (
     "Status must either be 'resolved','under investigation' or 'rejected'"

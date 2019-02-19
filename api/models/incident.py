@@ -1,33 +1,38 @@
-from api.helpers.auth_token import get_current_identity, is_admin_user
+from api.utilitiez.auth_token import get_current_identity, is_admin_user
 from database.db import DatabaseConnection
+from api.utilitiez.responses import (
+    duplicate_title,
+    duplicate_comment,
+)
 
 
 class Incident:
-    """Class that will contain all incident objects """
+    """Class that will contain incident objects """
     def __init__(self):
         self.db = DatabaseConnection()
 
-    def insert_incident(self, inc_type="red-flag", **kwargs):
+    def create_incident(self, inc_type="red-flag", **kwargs):
         """Method for inserting a new incident in the database"""
         title = kwargs.get("title")
         comment = kwargs.get("comment")
         location = (kwargs.get("location")[0], kwargs.get("location")[1])
         created_by = kwargs.get("user_id")
-        images = kwargs.get("images")
-        videos = kwargs.get("videos")
+        status = "draft"
         sql = (
             "INSERT INTO incidents ("
-            "title, comment, location, created_by, type"
+            "title, comment, location, created_by, status, incident_type"
             ")VALUES ("
             f"'{title}', '{comment}','{location}',"
-            f"'{created_by}', '{inc_type}') returning id;"
+            f"'{created_by}', '{status}' ,'{inc_type}') returning "
+            "incident_id,title as title,"
+            "location as location, "
+            "created_by as created_by,"
+            "status as status, "
+            "incident_type as incident_type;"
         )
         self.db.cursor_database.execute(sql)
-        last_insert_id = self.db.cursor_database.fetchone()
-        new_incident_id = last_insert_id.get("id")
-        self.insert_images(new_incident_id, images)
-        self.insert_videos(new_incident_id, videos)
-        return self.get_incident_by_id(new_incident_id)
+        new_incident = self.db.cursor_database.fetchone()
+        return new_incident
 
     def insert_images(self, incident_id, images):
         """Function that adds images to the database"""
@@ -139,5 +144,22 @@ class Incident:
             f"AND incident_id='{inc_id}' AND incident_type='{inc_type}' returning *;"
         )
         self.db.cursor_database.execute(sql)
-
         return self.db.cursor_database.fetchone()
+
+    def check_incident_exists(self, title, comment):
+        """Making sure that title and comment are unique"""
+        incident_exists_query = (
+            "SELECT title, comment from incidents where "
+            f"title ='{title}' OR comment='{comment}';"
+        )
+        self.db.cursor_database.execute(incident_exists_query)
+        incident_exists = self.db.cursor_database.fetchone()
+        error = {}
+
+        if incident_exists and incident_exists.get("title") == title:
+            error["title"] = duplicate_title
+
+        if incident_exists and incident_exists.get("comment") == comment:
+            error["comment"] = duplicate_comment
+        return error
+

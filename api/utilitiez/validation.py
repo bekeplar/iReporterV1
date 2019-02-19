@@ -2,8 +2,7 @@
 import re
 from flask import jsonify, request, abort
 from functools import wraps
-
-from api.helpers.responses import (
+from api.utilitiez.responses import (
     wrong_password,
     wrong_username,
     wrong_email,
@@ -168,7 +167,7 @@ def is_validate_media_type(collection, media_type):
 
 
 def validate_media(media_collection, media_type):
-    media_format = {"Videos": [".mp4", "MP4"], "Images": ["jpg", "JPEG"]}
+    media_format = {"Videos": [".mp4", ".mp4"], "Images": ["jpg", ".Jpg"]}
     error = None
     if not isinstance(media_collection, list):
         error = f"Please provide an empty list of {media_type} if none"
@@ -204,15 +203,12 @@ def validate_new_incident(**kwargs):
     errors["title"] = validate_sentence(kwargs.get("title"), 4, 100)
     errors["comment"] = validate_sentence(kwargs.get("comment"), 10)
     errors["location"] = validate_location(kwargs.get("location"))
-    errors["Images"] = validate_media(kwargs.get("images"), "Images")
-    errors["Videos"] = validate_media(kwargs.get("videos"), "Videos")
     errors["type"] = validate_type(kwargs.get("inc_type"))
     not_valid = {key: value for key, value in errors.items() if value}
 
     if not_valid:
         return (jsonify({"status": 400, "error": not_valid}), 400)
     return None
-
 
 def validate_edit_location(location):
     error = validate_location(location)
@@ -237,8 +233,8 @@ def is_valid_status(status):
 
 
 def validate_type(inc_type):
-    if inc_type == "red-flag" or inc_type == "intervention":
+    if inc_type == "redflag" or inc_type == "intervention":
         return None
     else:
-        return "type must either be red-flag or intervention"
+        return "type must either be redflag or intervention"
 
