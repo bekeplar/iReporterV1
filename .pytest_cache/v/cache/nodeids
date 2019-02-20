@@ -18,6 +18,18 @@
   "tests/test_auth.py::UserTestCase::test_user_name_missing",
   "tests/test_auth.py::UserTestCase::test_validity_of_password",
   "tests/test_incident.py::IncidentTestCase::test_create_new_intervention",
+  "tests/test_incident.py::IncidentTestCase::test_create_new_intervention_missing_data",
+  "tests/test_incident.py::IncidentTestCase::test_create_new_intervention_twice",
   "tests/test_incident.py::IncidentTestCase::test_create_redflag",
-  "tests/test_incident.py::IncidentTestCase::test_get_created_intervention"
+  "tests/test_incident.py::IncidentTestCase::test_create_redflag_with_no_token",
+  "tests/test_incident.py::IncidentTestCase::test_create_redflag_without_data",
+  "tests/test_incident.py::IncidentTestCase::test_delete_created_intervention",
+  "tests/test_incident.py::IncidentTestCase::test_delete_redflag_record",
+  "tests/test_incident.py::IncidentTestCase::test_get_all_created_intervention",
+  "tests/test_incident.py::IncidentTestCase::test_get_all_redflags",
+  "tests/test_incident.py::IncidentTestCase::test_get_created_intervention",
+  "tests/test_incident.py::IncidentTestCase::test_get_one_redflag_record",
+  "tests/test_incident.py::IncidentTestCase::test_home_page",
+  "tests/test_incident.py::IncidentTestCase::test_method_not_allowed",
+  "tests/test_incident.py::IncidentTestCase::test_page_not_found"
 ]

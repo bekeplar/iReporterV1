@@ -23,9 +23,16 @@ class Incident:
             "title, comment, location, created_by, status, incident_type"
             ")VALUES ("
             f"'{title}', '{comment}','{location}',"
-            f"'{created_by}', '{status}' ,'{inc_type}');"
+            f"'{created_by}', '{status}' ,'{inc_type}') returning "
+            "incident_id,title as title,"
+            "location as location, "
+            "created_by as created_by,"
+            "status as status, "
+            "incident_type as incident_type;"
         )
         self.db.cursor_database.execute(sql)
+        new_incident = self.db.cursor_database.fetchone()
+        return new_incident
 
     def insert_images(self, incident_id, images):
         """Function that adds images to the database"""

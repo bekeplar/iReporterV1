@@ -30,6 +30,7 @@ class IncidentController:
             "title": data.get("title"),
             "location": data.get("location"),
             "comment": data.get("comment"),
+            "created_by": data.get("user_id"),
             "inc_type": data.get("type"),
         }
 

@@ -1,6 +1,5 @@
 from os import environ
 from flask import current_app as app
-import uuid
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from instance.config import app_config, runtime_mode

@@ -18,13 +18,11 @@ class UserTestCase(unittest.TestCase):
                 "firstname": "Bekalaze",
                 "lastname": "Joseph",
                 "othernames": "Beka",
-                "username": "bekeplar",
-                "email": "bekeplar@gmail.com",
+                "username": "bekeplax",
+                "email": "bekeplax@gmail.com",
                 "password": "Bekeplar1234",
-                "phoneNumber": "0789057968"
+                "phoneNumber": "0789057967"
                 }
-    def tearDown(self):
-            self.db.drop_table('users')
         
 
     def test_can_signup_user(self):
@@ -318,4 +316,7 @@ class UserTestCase(unittest.TestCase):
         self.assertEqual(res.status_code,422)
         self.assertEqual(response_data['status'], 422)
         self.assertIsInstance(response_data, dict)
+
+    def tearDown(self):
+            self.db.drop_table('users')
         

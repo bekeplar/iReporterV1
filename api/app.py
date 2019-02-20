@@ -17,7 +17,6 @@ def create_app(config_name):
     app.config.from_pyfile('config.py')
 
     @app.route("/")
-    @app.route("/api/v1")
     def _home():
         return (
             jsonify({"message": "Welcome to iReporter Api V1", "status": 200}),
