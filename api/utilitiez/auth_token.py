@@ -65,7 +65,7 @@ def token_required(func):
 
 
 def get_current_identity():
-    user_id = decode_token(extract_token_from_header())["userid"]
+    user_id = decode_token(extract_token_from_header())["user_id"]
     sql = f"select * from users where user_id='{user_id}';"
     db.cursor_database.execute(sql)
     results = db.cursor_database.fetchone()
