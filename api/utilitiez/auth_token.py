@@ -9,7 +9,7 @@ from os import environ
 from api.utilitiez.responses import expired_token_message, invalid_token_message
 from database.db import DatabaseConnection
 
-secret_key = environ.get("SECRET_KEY", "my_secret_key")
+secret_key = environ.get("JWT_SECRET_KEY", 'this-is-my-secret')
 db = DatabaseConnection()
 
 
@@ -90,7 +90,7 @@ def non_admin(func):
             return (
                 jsonify(
                     {
-                        "error": "Admin cannot access this resource",
+                        "error": "Admin cannot access this route",
                         "status": 401,
                     }
                 ),
@@ -108,7 +108,7 @@ def admin_required(func):
             return (
                 jsonify(
                     {
-                        "error": "Only Admin can access this resource",
+                        "error": "Only Admin can change incident status",
                         "status": 401,
                     }
                 ),

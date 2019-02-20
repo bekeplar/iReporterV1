@@ -1,3 +1,12 @@
+"""File containing general application nresponses."""
+wrong_location = ("location must be a list with both Latitude and Longitude "
+                "coordinates"
+)
+
+length_of_location = ( "latitude must be between -90 and 90 and longitude "
+            "coordinates must be between -180 and 180"
+        )
+
 wrong_password = (
     "Password Must contain a Minimum 8 characters with atleast one upper case"
     " letter, atleast on lower case letter and  atleast one number."
@@ -30,5 +39,5 @@ wrong_status = (
 )
 delete_not_allowed = "You are not allowed to delete this resource"
 
-URL_SIGNUP = 'api/v1/auth/login'
+URL_SIGNUP = 'api/v1/auth/signup'
 URL_LOGIN = 'api/v1/auth/login'

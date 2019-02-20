@@ -214,7 +214,7 @@ class IncidentController:
                         "status": 200,
                         "data": [
                             {
-                                "id": updated_record["id"],
+                                "id": updated_record["incident_id"],
                                 "comment": updated_record["comment"],
                                 "success": f"Updated {incident_type} record's comment",
                             }
@@ -263,7 +263,7 @@ class IncidentController:
                         "status": 200,
                         "data": [
                             {
-                                "id": updated_record["id"],
+                                "id": updated_record["incident_id"],
                                 "status": updated_record["status"],
                                 "success": f"Updated {incident_type} record's status",
                             }
@@ -317,7 +317,7 @@ class IncidentController:
                         "status": 200,
                         "data": [
                             {
-                                "id": updated_record["id"],
+                                "id": updated_record["incident_id"],
                                 "location": updated_record["location"],
                                 "success": f"Updated {ireporter} record's location",
                             }

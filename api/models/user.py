@@ -26,6 +26,7 @@ class User:
         user_name = kwargs.get("user_name")
         user_password = generate_password_hash(kwargs["password"])
 
+        # Querry for adding a new user into users_db
         sql = (
             "INSERT INTO users ("
             "first_name,"
@@ -57,7 +58,7 @@ class User:
         self.db.cursor_database.execute(user_exists_sql)
         user_exists = self.db.cursor_database.fetchone()
         error = {}
-
+        # comparing new user details with db users
         if user_exists and user_exists.get("user_name") == user_name:
             error["username"] = duplicate_user_name
 
@@ -80,23 +81,23 @@ class User:
         return user_details
 
     def is_valid_credentials(self, user_name, user_password):
-        """Function for verrifying user credentials"""
+        """Function for verrifying user credentials before login"""
         sql = (
             "SELECT user_id,user_name ,user_password FROM users where user_name="
             f"'{user_name}';"
         )
         self.db.cursor_database.execute(sql)
 
-        user_db_details = self.db.cursor_database.fetchone()
+        user_details = self.db.cursor_database.fetchone()
 
         if (
-                user_db_details
-                and user_db_details.get("user_name") == user_name
+                user_details
+                and user_details.get("user_name") == user_name
                 and check_password_hash(
-            user_db_details.get("user_password"), user_password
+            user_details.get("user_password"), user_password
         )
         ):
-            id = user_db_details.get("user_id")
+            id = user_details.get("user_id")
 
             return id
         return None

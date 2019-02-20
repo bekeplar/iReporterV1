@@ -8,6 +8,8 @@ from api.utilitiez.responses import (
     wrong_email,
     wrong_phone_number,
     wrong_name,
+    wrong_location,
+    length_of_location,
 )
 
 
@@ -183,17 +185,11 @@ def validate_media(media_collection, media_type):
 def validate_location(location):
     error = None
     if not isinstance(location, list) or not len(location) == 2:
-        error = (
-            "location must be a list with both Latitude and Longitude "
-            "coordinates"
-        )
+        error = wrong_location
     elif not is_number(location[0]) or not is_number(location[1]):
         error = "location coordinates must be a number"
     elif not -90 < location[0] < 90 or not -180 < location[1] < 180:
-        error = (
-            "latitude must be between -90 and 90 and longitude "
-            "coordinates must be between -180 and 180"
-        )
+        error = length_of_location
 
     return error
 

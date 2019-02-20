@@ -11,13 +11,15 @@ class Incident:
     def __init__(self):
         self.db = DatabaseConnection()
 
-    def create_incident(self, inc_type="red-flag", **kwargs):
+    def create_incident(self, inc_type, **kwargs):
         """Method for inserting a new incident in the database"""
         title = kwargs.get("title")
         comment = kwargs.get("comment")
         location = (kwargs.get("location")[0], kwargs.get("location")[1])
         created_by = kwargs.get("user_id")
         status = "draft"
+
+        # Querry for inserting a new incident record to incidents_db 
         sql = (
             "INSERT INTO incidents ("
             "title, comment, location, created_by, status, incident_type"
@@ -122,7 +124,7 @@ class Incident:
         comment = comment.strip()
         sql = (
             f"UPDATE incidents SET comment='{comment}' "
-            f"WHERE incident_id='{inc_id}' returning id, comment;"
+            f"WHERE incident_id='{inc_id}' returning incident_id, comment;"
         )
         self.db.cursor_database.execute(sql)
         return self.db.cursor_database.fetchone()
@@ -132,7 +134,7 @@ class Incident:
         status = status.strip().lower().capitalize()
         sql = (
             f"UPDATE incidents SET status='{status}' "
-            f"WHERE incident_id='{inc_id}' returning id ,status;"
+            f"WHERE incident_id='{inc_id}' returning incident_id ,status;"
         )
         self.db.cursor_database.execute(sql)
         return self.db.cursor_database.fetchone()
@@ -155,7 +157,7 @@ class Incident:
         self.db.cursor_database.execute(incident_exists_query)
         incident_exists = self.db.cursor_database.fetchone()
         error = {}
-
+        # checking existance of either title or comment
         if incident_exists and incident_exists.get("title") == title:
             error["title"] = duplicate_title
 
