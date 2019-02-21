@@ -14,6 +14,7 @@ class User:
     """class defines the user objects structure"""
 
     def __init__(self, **kwargs):
+        # Generating a user's database
         self.db = DatabaseConnection()
 
     def insert_user(self, **kwargs):
@@ -49,7 +50,7 @@ class User:
         return new_user
 
     def check_if_user_exists(self, user_name, email, phone_number):
-        """Making sure that user_name and email are unique"""
+        """Making sure that user_name, phone_ number and email are unique"""
         user_exists_sql = (
             "SELECT user_name,email, phone_number from users where "
             f"user_name ='{user_name}' OR email='{email}' OR"
