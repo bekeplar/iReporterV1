@@ -23,6 +23,9 @@ class UserTestCase(unittest.TestCase):
                 "password": "Bekeplar1234",
                 "phoneNumber": "0789057967"
                 }
+
+    # def tearDown(self):
+    #         self.db.drop_table('users')
         
 
     def test_can_signup_user(self):

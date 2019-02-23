@@ -81,6 +81,16 @@ class User:
         user_details = self.db.cursor_database.fetchone()
         return user_details
 
+    def get_all_users(self):
+        sql = (
+            "SELECT first_name, last_name, other_names, "
+            "email, phone_number, user_name, "
+            "registered_on FROM users "
+            "WHERE user_name != 'admin';"
+        )
+        self.db.cursor_database.execute(sql)
+        return self.db.cursor_database.fetchall()
+
     def is_valid_credentials(self, user_name, user_password):
         """Function for verrifying user credentials before login"""
         sql = (
@@ -102,3 +112,9 @@ class User:
 
             return id
         return None
+    def create_token_in_db(self, token, user_id):
+        sql = (
+            "INSERT INTO users_auth (token,user_id) "
+            f"VALUES('{token}', '{user_id}');"
+        )
+        self.db.cursor_database.execute(sql)

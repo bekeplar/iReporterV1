@@ -1,4 +1,4 @@
-"""File for all userauthentication code"""
+"""File for all user authentication code"""
 
 import datetime
 import jwt
@@ -20,8 +20,9 @@ def encode_token(user_id):
         "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=24),
     }
     token = jwt.encode(payload, secret_key, algorithm="HS256").decode("utf-8")
-
     return token
+
+
 
 
 def decode_token(token):
@@ -38,6 +39,15 @@ def extract_token_from_header():
         )
     token = str(authorizaton_header).split(" ")[1]
     return token
+
+def blacklist_token():
+    """Logs out a user"""
+    sql = (
+        "UPDATE users_auth SET is_blacklisted ="
+        f"True WHERE token='{extract_token_from_header()}';"
+    )
+    db.cursor_database.execute(sql)
+
 
 
 def token_required(func):
@@ -65,14 +75,12 @@ def token_required(func):
 
 
 def get_current_identity():
-    user_id = decode_token(extract_token_from_header())["user_id"]
-    sql = f"select * from users where user_id='{user_id}';"
+    user_id = decode_token(extract_token_from_header())["userid"]
+    sql = f"select user_id from users where user_id='{user_id}';"
     db.cursor_database.execute(sql)
     results = db.cursor_database.fetchone()
     if results:
         return results["user_id"]
-    else:
-        abort(401)
 
 
 def is_admin_user():

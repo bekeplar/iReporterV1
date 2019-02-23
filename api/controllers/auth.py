@@ -1,6 +1,9 @@
 from flask import Blueprint, jsonify, request, json
 
-from api.utilitiez.auth_token import encode_token
+from api.utilitiez.auth_token import(
+    encode_token,
+    blacklist_token, 
+    get_current_identity)
 from api.utilitiez.validation import validate_new_user
 
 from api.models.user import User
@@ -119,3 +122,39 @@ class UserController():
                 422,
             )
         return response
+
+
+    def get_users(self):
+        # Admin get all users in the database
+        all_users = user_obj.get_all_users()
+        return (
+            jsonify(
+                {"data": [{"users": all_users}], "status": 200}
+            ),
+            200,
+        )
+
+    
+    def logout(self):
+        # Enable user to logout of the application
+        blacklist_token()
+
+        return (
+            jsonify(
+                {"data": [{"success": "Logged out successfully"}], "status": 200}
+            ),
+            200,
+        )
+
+
+    def logged_in(self):
+        user_id = get_current_identity()
+        user_details = user_obj.get_user_details(user_id)
+        return (
+            jsonify(
+                {"data": [{"user": user_details}], "status": 200}
+            ),
+            200,
+        )
+
+

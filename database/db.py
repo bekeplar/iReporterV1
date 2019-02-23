@@ -1,6 +1,7 @@
 from os import environ
 from flask import current_app as app
 import psycopg2
+import uuid
 from psycopg2.extras import RealDictCursor
 from instance.config import app_config, runtime_mode
 import os
@@ -55,6 +56,14 @@ class DatabaseConnection:
             );"""
 
             
+            create_auth_table = """CREATE TABLE IF NOT EXISTS users_auth
+            (
+                user_id SERIAL NOT NULL PRIMARY KEY,
+                token VARCHAR(255) NOT NULL,
+                is_blacklisted BOOLEAN DEFAULT FALSE,
+                last_login DATE DEFAULT CURRENT_TIMESTAMP
+            );"""
+
             create_images_db = """CREATE TABLE IF NOT EXISTS incident_images(
             incident_id SERIAL PRIMARY KEY,
             image_url VARCHAR(50)
@@ -66,6 +75,7 @@ class DatabaseConnection:
             );"""
 
             self.cursor_database.execute(create_user_table)
+            self.cursor_database.execute(create_auth_table)
             self.cursor_database.execute(create_incidents_table)
             self.cursor_database.execute(create_images_db)
             self.cursor_database.execute(create_videos_db)

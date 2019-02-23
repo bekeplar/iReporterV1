@@ -39,5 +39,3 @@ wrong_status = (
 )
 delete_not_allowed = "You are not allowed to delete this resource"
 
-URL_SIGNUP = 'api/v1/auth/signup'
-URL_LOGIN = 'api/v1/auth/login'
