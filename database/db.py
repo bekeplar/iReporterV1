@@ -86,7 +86,8 @@ class DatabaseConnection:
     
     def database_connection(self, database_name):
             """Function for connecting to appropriate database"""
-            return psycopg2.connect(dbname='postgres', user='postgres', host='localhost', password='bekeplar')
+            return psycopg2.connect(dbname='d3harp2ofapmia', user='pxmknfaitfhdfk',
+             host='ec2-54-163-234-88.compute-1.amazonaws.com', port=5432,password='6743afd60400edc0898461827ec99dd03cfdb166a9b6d20722198b14cc4d3f5c')
 
         
     def drop_table(self, table_name):
