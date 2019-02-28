@@ -102,7 +102,6 @@ user = [
         "email":"bekeplar@gmail.com",
         "phoneNumber":"0789057968",
         "username":"bekeplar",
-        "isAdmin":"False",
         "password":"bekeplar1234"
     }
 ]
