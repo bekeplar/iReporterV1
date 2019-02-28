@@ -187,6 +187,23 @@ class UserTestCase(unittest.TestCase):
         self.assertIsInstance(response_data, dict)
         
 
+    def test_user_name_validity(self):
+        data = {
+                "firstname": "Bekalaze",
+                "lastname": "Joseph",
+                "othernames": "Beka",
+                "username": 1,
+                "email": "bekeplar@gmail.com",
+                "password": "Bekeplar1234",
+                "phoneNumber": "0789057968"
+                }
+        res = self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(data))
+        response_data = json.loads(res.data.decode())
+        self.assertEqual(res.status_code,400)
+        self.assertEqual(response_data['status'], 400)
+        self.assertIsInstance(response_data, dict)
+        
+
     def test_phone_number_is_invalid(self):
         data = {
                 "firstname": "Bekalaze",
@@ -196,6 +213,22 @@ class UserTestCase(unittest.TestCase):
                 "email": "bekeplar@gmail.com",
                 "password": "Bekeplar1234",
                 "phoneNumber": "0789057"
+                }
+        res = self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(data))
+        response_data = json.loads(res.data.decode())
+        self.assertEqual(res.status_code,400)
+        self.assertEqual(response_data['status'], 400)
+        self.assertIsInstance(response_data, dict)
+
+    def test_phone_number_is_string(self):
+        data = {
+                "firstname": "Bekalaze",
+                "lastname": "Joseph",
+                "othernames": "Beka",
+                "username": "bekeplar",
+                "email": "bekeplar@gmail.com",
+                "password": "Bekeplar1234",
+                "phoneNumber": "mmm"
                 }
         res = self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(data))
         response_data = json.loads(res.data.decode())
@@ -282,6 +315,7 @@ class UserTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(response_data['status'], 200)
         self.assertIsInstance(response_data, dict)
+       
        
 
     def test_returns_error_on_invalid_login_details(self):

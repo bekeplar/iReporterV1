@@ -94,11 +94,7 @@ class Incident:
             record = None
         return record
 
-    def get_incident_by_id(self, inc_id):
-        """Function for getting an incident by its id"""
-        sql = f"SELECT * FROM incidents" f"WHERE incident_id='{inc_id}';"
-        self.db.cursor_database.execute(sql)
-        return self.db.cursor_database.fetchone()
+
 
     def get_incident_by_id_and_type(self, inc_type, inc_id):
         """Function for getting an incident by id and type."""

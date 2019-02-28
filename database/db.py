@@ -93,7 +93,7 @@ class DatabaseConnection:
             """
             Drop tables after tests
             """
-            drop = f"DROP TABLE {table_name};"
+            drop = f"DROP TABLE {table_name} CASCADE;"
             self.cursor_database.execute(drop)
 
 

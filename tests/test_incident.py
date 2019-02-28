@@ -4,6 +4,7 @@ import json
 from flask import Response, json
 from api.app import create_app
 from database.db import DatabaseConnection
+from api.utilitiez.auth_token import encode_token
 from api.models.user import User
 from api.models.incident import Incident
 import jwt
@@ -40,14 +41,11 @@ class IncidentTestCase(unittest.TestCase):
                 "created_by": 1,
                 "type": "redflag"
                 }
+        
+        self.user_id = 1
+        self.token = encode_token(self.user_id)
 
-        self.redflag1_data = {
-                "title": "",
-                "location": "",
-                "comment": "",
-                "created_by": "",
-                "type": ""
-                }
+        
         
         self.intervention_data = {
                 "title": "bribery",
@@ -64,8 +62,14 @@ class IncidentTestCase(unittest.TestCase):
                 "type": ""
                 }
 
+        self.data = {}
+
         self.new_comment = {
             "comment": "People change if tasked to" 
+        }
+
+        self.new_status = {
+            "status": "resolved" 
         }
 
         self.new_location = {
@@ -104,25 +108,30 @@ class IncidentTestCase(unittest.TestCase):
     def test_create_redflag(self):
         self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user_data))        
         res1 = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps(self.user_login_data))
-        access_token = json.loads(res1.data.decode())
         self.assertEqual(res1.status_code, 200)
         res = self.client.post('/api/v1/redflags', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.redflag_data))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.redflag_data))
         response_data = json.loads(res.data.decode())
-        self.assertEqual(res.status_code, 401)
-        self.assertEqual(response_data['status'], 401)
+        self.assertEqual(res.status_code, 201)
+        self.assertEqual(response_data['status'], 201)
         self.assertIsInstance(response_data, dict)
 
     def test_create_redflag_without_data(self):
         self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user_data))        
         res1 = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps(self.user_login_data))
-        access_token = json.loads(res1.data.decode())
         self.assertEqual(res1.status_code, 200)
+        redflag1_data = {
+            "location": [60, 120],
+            "comment": "",
+            "created_by": 1,
+            "type": "redflag"
+
+                }
         res = self.client.post('/api/v1/redflags', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.redflag1_data))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(redflag1_data))
         response_data = json.loads(res.data.decode())
-        self.assertEqual(res.status_code, 401)
-        self.assertEqual(response_data['status'], 401)
+        self.assertEqual(res.status_code, 201)
+        self.assertEqual(response_data['status'], 201)
         self.assertIsInstance(response_data, dict)
 
 
@@ -138,181 +147,278 @@ class IncidentTestCase(unittest.TestCase):
     def test_create_new_intervention(self):
         self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user_data))        
         res1 = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps(self.user_login_data))
-        access_token = json.loads(res1.data.decode())
         self.assertEqual(res1.status_code, 200)
         res = self.client.post('/api/v1/interventions', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.intervention_data))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.intervention_data))
         response_data = json.loads(res.data.decode())
-        self.assertEqual(res.status_code, 401)
-        self.assertEqual(response_data['status'], 401)
+        self.assertEqual(res.status_code, 201)
+        self.assertEqual(response_data['status'], 201)
         self.assertIsInstance(response_data, dict)
+
+    def test_duplicate_redflag(self):
+            self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user_data))        
+            res1 = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps(self.user_login_data))
+            self.assertEqual(res1.status_code, 200)
+            self.client.post('/api/v1/redflags', content_type="application/json",
+                headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.redflag_data))
+            res = self.client.post('/api/v1/redflags', content_type="application/json",
+                headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.redflag_data))
+            response_data = json.loads(res.data.decode())
+            self.assertEqual(res.status_code, 409)
+            self.assertEqual(response_data['status'], 409)
+            self.assertIsInstance(response_data, dict)
+
 
     def test_create_new_intervention_missing_data(self):
         self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user_data))        
         res1 = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps(self.user_login_data))
-        access_token = json.loads(res1.data.decode())
         self.assertEqual(res1.status_code, 200)
+        intervention1_data = {
+            "location": [60, 120],
+            "comment": "These are serious allegations",
+            "created_by": 1,
+            "type": "intervention"
+
+                }
         res = self.client.post('/api/v1/interventions', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.intervention1_data))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(intervention1_data))
         response_data = json.loads(res.data.decode())
-        self.assertEqual(res.status_code, 401)
-        self.assertEqual(response_data['status'], 401)
+        self.assertEqual(res.status_code, 201)
+        self.assertEqual(response_data['status'], 201)
         self.assertIsInstance(response_data, dict)
 
 
     def test_create_new_intervention_twice(self):
         self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user_data))        
         res1 = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps(self.user_login_data))
-        access_token = json.loads(res1.data.decode())
         self.assertEqual(res1.status_code, 200)
         self.client.post('/api/v1/interventions', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.intervention_data))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.intervention_data))
         res = self.client.post('/api/v1/interventions', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.intervention_data))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.intervention_data))
         response_data = json.loads(res.data.decode())
-        self.assertEqual(res.status_code, 401)
-        self.assertEqual(response_data['status'], 401)
+        self.assertEqual(res.status_code, 409)
+        self.assertEqual(response_data['status'], 409)
         self.assertIsInstance(response_data, dict)
-
 
     def test_get_created_intervention(self):
         self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user_data))        
         res1 = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps(self.user_login_data))
-        access_token = json.loads(res1.data.decode())
         self.assertEqual(res1.status_code, 200)
         self.client.post('/api/v1/interventions', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.intervention_data))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.intervention_data))
         res = self.client.get('/api/v1/interventions/1', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.intervention_data))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.intervention_data))
         response_data = json.loads(res.data.decode())
-        self.assertEqual(res.status_code, 401)
-        self.assertEqual(response_data['status'], 401)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(response_data['status'], 200)
         self.assertIsInstance(response_data, dict)
 
     def test_get_all_created_intervention(self):
         self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user_data))        
         res1 = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps(self.user_login_data))
-        access_token = json.loads(res1.data.decode())
         self.assertEqual(res1.status_code, 200)
         self.client.post('/api/v1/interventions', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.intervention_data))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.intervention_data))
         res = self.client.get('/api/v1/interventions', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.intervention_data))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.intervention_data))
         response_data = json.loads(res.data.decode())
-        self.assertEqual(res.status_code, 401)
-        self.assertEqual(response_data['status'], 401)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(response_data['status'], 200)
         self.assertIsInstance(response_data, dict)
+
+    def test_get_all_intervention_empty_database(self):
+        self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user_data))        
+        res1 = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps(self.user_login_data))
+        self.assertEqual(res1.status_code, 200)
+        res = self.client.get('/api/v1/interventions', content_type="application/json",
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.intervention_data))
+        response_data = json.loads(res.data.decode())
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(response_data['status'], 200)
+        self.assertIsInstance(response_data, dict)
+
 
     def test_get_all_redflags(self):
         self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user_data))        
         res1 = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps(self.user_login_data))
-        access_token = json.loads(res1.data.decode())
         self.assertEqual(res1.status_code, 200)
         self.client.post('/api/v1/redflags', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.redflag_data))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.redflag_data))
         res = self.client.get('/api/v1/redflags', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.redflag_data))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.redflag_data))
         response_data = json.loads(res.data.decode())
-        self.assertEqual(res.status_code, 401)
-        self.assertEqual(response_data['status'], 401)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(response_data['status'], 200)
+        self.assertIsInstance(response_data, dict)
+
+    def test_get_all_redflags_from_empty_database(self):
+        self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user_data))        
+        res1 = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps(self.user_login_data))
+        self.assertEqual(res1.status_code, 200)
+        res = self.client.get('/api/v1/redflags', content_type="application/json",
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.redflag_data))
+        response_data = json.loads(res.data.decode())
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(response_data['status'], 200)
         self.assertIsInstance(response_data, dict)
 
     def test_get_one_redflag_record(self):
         self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user_data))        
         res1 = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps(self.user_login_data))
-        access_token = json.loads(res1.data.decode())
         self.assertEqual(res1.status_code, 200)
         self.client.post('/api/v1/redflags', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.redflag_data))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.redflag_data))
         res = self.client.get('/api/v1/redflags/1', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.redflag_data))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.redflag_data))
         response_data = json.loads(res.data.decode())
-        self.assertEqual(res.status_code, 401)
-        self.assertEqual(response_data['status'], 401)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(response_data['status'], 200)
         self.assertIsInstance(response_data, dict)
 
     def test_delete_redflag_record(self):
         self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user_data))        
         res1 = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps(self.user_login_data))
-        access_token = json.loads(res1.data.decode())
         self.assertEqual(res1.status_code, 200)
         self.client.post('/api/v1/redflags', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.redflag_data))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.redflag_data))
         res = self.client.delete('/api/v1/redflags/1', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.redflag_data))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.redflag_data))
         response_data = json.loads(res.data.decode())
-        self.assertEqual(res.status_code, 401)
-        self.assertEqual(response_data['status'], 401)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(response_data['status'], 200)
         self.assertIsInstance(response_data, dict)
+
+    def test_delete_non_existing_redflag_record(self):
+        self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user_data))        
+        res1 = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps(self.user_login_data))
+        self.assertEqual(res1.status_code, 200)
+        self.client.post('/api/v1/redflags', content_type="application/json",
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.redflag_data))
+        res = self.client.delete('/api/v1/redflags/3', content_type="application/json",
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.redflag_data))
+        response_data = json.loads(res.data.decode())
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(response_data['status'], 404)
+        self.assertIsInstance(response_data, dict)
+
 
     def test_delete_created_intervention(self):
         self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user_data))        
         res1 = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps(self.user_login_data))
-        access_token = json.loads(res1.data.decode())
         self.assertEqual(res1.status_code, 200)
         self.client.post('/api/v1/interventions', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.intervention_data))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.intervention_data))
         res = self.client.delete('/api/v1/interventions/1', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.intervention_data))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.intervention_data))
         response_data = json.loads(res.data.decode())
-        self.assertEqual(res.status_code, 401)
-        self.assertEqual(response_data['status'], 401)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(response_data['status'], 200)
+        self.assertIsInstance(response_data, dict)
+
+    def test_delete_intervention_not_in_database(self):
+        self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user_data))        
+        res1 = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps(self.user_login_data))
+        self.assertEqual(res1.status_code, 200)
+        self.client.post('/api/v1/interventions', content_type="application/json",
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.intervention_data))
+        res = self.client.delete('/api/v1/interventions/2', content_type="application/json",
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.intervention_data))
+        response_data = json.loads(res.data.decode())
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(response_data['status'], 404)
         self.assertIsInstance(response_data, dict)
 
 
     def test_edit_intervention_comment(self):
         self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user_data))        
         res1 = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps(self.user_login_data))
-        access_token = json.loads(res1.data.decode())
         self.assertEqual(res1.status_code, 200)
         self.client.post('/api/v1/interventions', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.intervention_data))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.intervention_data))
         res = self.client.patch('/api/v1/interventions/1/comment', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.new_comment))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.new_comment))
         response_data = json.loads(res.data.decode())
-        self.assertEqual(res.status_code, 401)
-        self.assertEqual(response_data['status'], 401)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(response_data['status'], 200)
         self.assertIsInstance(response_data, dict)
 
 
     def test_edit_redflag_comment(self):
         self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user_data))        
         res1 = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps(self.user_login_data))
-        access_token = json.loads(res1.data.decode())
         self.assertEqual(res1.status_code, 200)
         self.client.post('/api/v1/redflags', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.intervention_data))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.redflag_data))
         res = self.client.patch('/api/v1/redflags/1/comment', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.new_comment))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.new_comment))
         response_data = json.loads(res.data.decode())
-        self.assertEqual(res.status_code, 401)
-        self.assertEqual(response_data['status'], 401)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(response_data['status'], 200)
         self.assertIsInstance(response_data, dict)
 
     def test_edit_intervention_location(self):
         self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user_data))        
         res1 = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps(self.user_login_data))
-        access_token = json.loads(res1.data.decode())
         self.assertEqual(res1.status_code, 200)
         self.client.post('/api/v1/interventions', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.intervention_data))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.intervention_data))
         res = self.client.patch('/api/v1/interventions/1/location', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.new_location))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.new_location))
         response_data = json.loads(res.data.decode())
-        self.assertEqual(res.status_code, 401)
-        self.assertEqual(response_data['status'], 401)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(response_data['status'], 200)
         self.assertIsInstance(response_data, dict)
 
 
     def test_edit_redflag_location(self):
         self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user_data))        
         res1 = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps(self.user_login_data))
-        access_token = json.loads(res1.data.decode())
         self.assertEqual(res1.status_code, 200)
         self.client.post('/api/v1/redflags', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.intervention_data))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.redflag_data))
         res = self.client.patch('/api/v1/redflags/1/location', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + str(access_token)}, data=json.dumps(self.new_location))
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.new_location))
+        response_data = json.loads(res.data.decode())
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(response_data['status'], 200)
+        self.assertIsInstance(response_data, dict)
+
+    def test_edit_redflag_location_no_token(self):
+        self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user_data))        
+        res1 = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps(self.user_login_data))
+        self.assertEqual(res1.status_code, 200)
+        self.client.post('/api/v1/redflags', content_type="application/json",
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.redflag_data))
+        res = self.client.patch('/api/v1/redflags/1/location', content_type="application/json",
+            data=json.dumps(self.new_location))
+        response_data = json.loads(res.data.decode())
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(response_data['status'], 401)
+        self.assertIsInstance(response_data, dict)
+
+    def test_edit_intervention_status_not_admin(self):
+        self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user_data))        
+        res1 = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps(self.user_login_data))
+        self.assertEqual(res1.status_code, 200)
+        self.client.post('/api/v1/interventions', content_type="application/json",
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.intervention_data))
+        res = self.client.patch('/api/v1/interventions/1/status', content_type="application/json",
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.new_status))
+        response_data = json.loads(res.data.decode())
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(response_data['status'], 401)
+        self.assertIsInstance(response_data, dict)
+
+
+    def test_edit_redflag_status_not_admin(self):
+        self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user_data))        
+        res1 = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps(self.user_login_data))
+        self.assertEqual(res1.status_code, 200)
+        self.client.post('/api/v1/redflags', content_type="application/json",
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.intervention_data))
+        res = self.client.patch('/api/v1/redflags/1/status', content_type="application/json",
+            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(self.new_status))
         response_data = json.loads(res.data.decode())
         self.assertEqual(res.status_code, 401)
         self.assertEqual(response_data['status'], 401)
