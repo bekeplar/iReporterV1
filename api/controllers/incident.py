@@ -1,10 +1,9 @@
-from flask import Blueprint, jsonify, request
+from flask import jsonify, request
 from api.models.incident import Incident
 from api.utilitiez.auth_token import get_current_identity
 from api.utilitiez.responses import delete_not_allowed, wrong_status
 from api.utilitiez.validation import (
     validate_new_incident,
-    request_data_required,
     validate_edit_location,
     is_valid_status,
     validate_sentence,
@@ -12,6 +11,7 @@ from api.utilitiez.validation import (
 
 
 incident_obj = Incident()
+
 
 class IncidentController:
     """
@@ -21,7 +21,8 @@ class IncidentController:
     def new_incident(self, data, ireporter):
         if not request.data:
             return (
-                jsonify({"error": "Please provide some incident data", "status": 400}),
+                jsonify(
+                    {"error": "Please provide some incident data", "status": 400}),
                 400,
             )
         data = request.get_json()
@@ -64,23 +65,23 @@ class IncidentController:
                 201,
             )
         return response
-    
 
     def get_incidents(self, ireporter):
         results = incident_obj.get_all_records(inc_type=ireporter)
 
         return jsonify({"status": 200,
-               "data": results, 
-               "message": f"{ireporter} records found"}), 200
+                        "data": results,
+                        "message": f"{ireporter} records found"}), 200
 
     def get_a_specific_incident(self, incident_id, ireporter):
-        results = incident_obj.get_incident_by_id_and_type(
-        inc_type=ireporter, inc_id=incident_id
-        )
+        results = incident_obj.get_incident_by_id_and_type(inc_type=ireporter,
+                                                           inc_id=incident_id
+                                                           )
 
         response = None
         if results and "error" in results:
-            response = (jsonify({"status": 401, "error": results["error"]}), 401)
+            response = (
+                jsonify({"status": 401, "error": results["error"]}), 401)
         elif results:
             response = jsonify({"status": 200, "data": [results]}), 200
         else:
@@ -116,7 +117,8 @@ class IncidentController:
             )
         elif not results["created_by"] == get_current_identity():
 
-            response = (jsonify({"status": 403, "error": delete_not_allowed}), 403)
+            response = (
+                jsonify({"status": 403, "error": delete_not_allowed}), 403)
         elif results["status"].lower() == "draft":
             delete_id = incident_obj.delete_incident_record(
                 inc_id=incident_id,
@@ -172,7 +174,7 @@ class IncidentController:
                     {
                         "status": 404,
                         "error": f"{ireporter} record with specified id does not exist",
-                                
+
                     }
                 ),
                 404,
@@ -337,4 +339,3 @@ class IncidentController:
                 403,
             )
         return response
-

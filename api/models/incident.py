@@ -8,6 +8,7 @@ from api.utilitiez.responses import (
 
 class Incident:
     """Class that will contain incident objects """
+
     def __init__(self):
         self.db = DatabaseConnection()
 
@@ -19,7 +20,7 @@ class Incident:
         created_by = kwargs.get("user_id")
         status = "draft"
 
-        # Querry for inserting a new incident record to incidents_db 
+        # Querry for inserting a new incident record to incidents_db
         sql = (
             "INSERT INTO incidents ("
             "title, comment, location, created_by, status, incident_type"
@@ -58,7 +59,7 @@ class Incident:
 
     def get_all_incident_records(self, inc_type):
         """Method to allow admin user get all records"""
-        if is_admin_user(): 
+        if is_admin_user():
             return self.get_all_records(inc_type)
         user_id = str(get_current_identity())
 
@@ -94,13 +95,12 @@ class Incident:
             record = None
         return record
 
-
-
     def get_incident_by_id_and_type(self, inc_type, inc_id):
         """Function for getting an incident by id and type."""
 
         sql = (
-            f"SELECT * FROM incidents WHERE incident_id='{inc_id}' AND incident_type='{inc_type}';"
+            f"SELECT * FROM incidents WHERE incident_id='{inc_id}' \
+                AND incident_type='{inc_type}';"
         )
         self.db.cursor_database.execute(sql)
         return self.db.cursor_database.fetchone()
@@ -160,4 +160,3 @@ class Incident:
         if incident_exists and incident_exists.get("comment") == comment:
             error["comment"] = duplicate_comment
         return error
-

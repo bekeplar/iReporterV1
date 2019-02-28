@@ -1,6 +1,5 @@
 import unittest
 import json
-from flask import Response, json
 from api.app import create_app
 from database.db import DatabaseConnection
 from api.models.user import User
@@ -24,10 +23,7 @@ class UserTestCase(unittest.TestCase):
                 "phoneNumber": "0789057967"
                 }
 
-    # def tearDown(self):
-    #         self.db.drop_table('users')
-        
-
+    
     def test_can_signup_user(self):
         
         res = self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.data))

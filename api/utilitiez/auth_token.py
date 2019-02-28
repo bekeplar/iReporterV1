@@ -2,7 +2,7 @@
 
 import datetime
 import jwt
-from flask import request, jsonify, abort
+from flask import request, jsonify
 from functools import wraps
 from os import environ
 
@@ -17,12 +17,10 @@ def encode_token(user_id):
     payload = {
         "userid": user_id,
         "iat": datetime.datetime.utcnow(),
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=24),
+        "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=6),
     }
     token = jwt.encode(payload, secret_key, algorithm="HS256").decode("utf-8")
     return token
-
-
 
 
 def decode_token(token):
@@ -39,15 +37,6 @@ def extract_token_from_header():
         )
     token = str(authorizaton_header).split(" ")[1]
     return token
-
-def blacklist_token():
-    """Logs out a user"""
-    sql = (
-        "UPDATE users_auth SET is_blacklisted ="
-        f"True WHERE token='{extract_token_from_header()}';"
-    )
-    db.cursor_database.execute(sql)
-
 
 
 def token_required(func):
@@ -98,7 +87,7 @@ def non_admin(func):
             return (
                 jsonify(
                     {
-                        "error": "Admin cannot access this route",
+                        "error": "Admin cannot access this resource",
                         "status": 401,
                     }
                 ),
@@ -116,7 +105,7 @@ def admin_required(func):
             return (
                 jsonify(
                     {
-                        "error": "Only Admin can change incident status",
+                        "error": "Only Admin can access this resource",
                         "status": 401,
                     }
                 ),

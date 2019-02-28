@@ -1,13 +1,10 @@
 import unittest
-import datetime
 import json
-from flask import Response, json
 from api.app import create_app
 from database.db import DatabaseConnection
 from api.utilitiez.auth_token import encode_token
 from api.models.user import User
 from api.models.incident import Incident
-import jwt
 
 
 class IncidentTestCase(unittest.TestCase):

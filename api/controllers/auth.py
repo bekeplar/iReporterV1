@@ -1,14 +1,14 @@
-from flask import Blueprint, jsonify, request, json
-
-from api.utilitiez.auth_token import(
-    encode_token,
-    get_current_identity)
+from flask import jsonify, request
+import json
+from api.utilitiez.auth_token import (
+    encode_token)
 from api.utilitiez.validation import validate_new_user
 
 from api.models.user import User
 
 
 user_obj = User()
+
 
 class UserController():
 
@@ -70,7 +70,6 @@ class UserController():
                 201,
             )
         return response
-
 
     def login(self):
         if not request.data:

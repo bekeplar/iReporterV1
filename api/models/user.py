@@ -81,11 +81,11 @@ class User:
         user_details = self.db.cursor_database.fetchone()
         return user_details
 
-
     def is_valid_credentials(self, user_name, user_password):
         """Function for verrifying user credentials before login"""
         sql = (
-            "SELECT user_id,user_name ,user_password FROM users where user_name="
+            "SELECT user_id,user_name ,user_password FROM users \
+                where user_name="
             f"'{user_name}';"
         )
         self.db.cursor_database.execute(sql)
@@ -96,16 +96,11 @@ class User:
                 user_details
                 and user_details.get("user_name") == user_name
                 and check_password_hash(
-            user_details.get("user_password"), user_password
+                user_details.get("user_password"), user_password
         )
         ):
             id = user_details.get("user_id")
 
             return id
         return None
-    # def create_token_in_db(self, token, user_id):
-    #     sql = (
-    #         "INSERT INTO users_auth (token,user_id) "
-    #         f"VALUES('{token}', '{user_id}');"
-    #     )
-    #     self.db.cursor_database.execute(sql)
+    

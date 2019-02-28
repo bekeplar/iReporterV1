@@ -1,9 +1,6 @@
-from os import environ
-from flask import current_app as app
 import psycopg2
-import uuid
 from psycopg2.extras import RealDictCursor
-from instance.config import app_config, runtime_mode
+from instance.config import runtime_mode
 import os
 
 
@@ -27,7 +24,6 @@ class DatabaseConnection:
             self.database_connect.autocommit = True
             self.cursor_database = self.database_connect.cursor(cursor_factory=RealDictCursor)
             print('Connected to the database successfully.')
-           
             
             create_user_table = """CREATE TABLE IF NOT EXISTS users
             (
@@ -55,7 +51,6 @@ class DatabaseConnection:
                 incident_type VARCHAR(50) NOT NULL
             );"""
 
-            
             create_auth_table = """CREATE TABLE IF NOT EXISTS users_auth
             (
                 user_id SERIAL NOT NULL PRIMARY KEY,
@@ -79,7 +74,6 @@ class DatabaseConnection:
             self.cursor_database.execute(create_incidents_table)
             self.cursor_database.execute(create_images_db)
             self.cursor_database.execute(create_videos_db)
-
 
         except (Exception, psycopg2.Error) as e:
             print(e)

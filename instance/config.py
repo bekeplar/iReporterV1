@@ -2,6 +2,7 @@ import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+
 class BaseConfig:
     """Default configuration. Details from this configuration
     class are shared across all environments  """
@@ -16,6 +17,7 @@ class DevelopmentConfig(BaseConfig):
     DEBUG = True
     TESTING = False
     ENV = "Development"
+
 
 class TestingConfig(BaseConfig):
     """Testing configuraion. Loads Test configuration data
