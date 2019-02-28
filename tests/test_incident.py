@@ -97,6 +97,16 @@ class IncidentTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 405)
         self.assertEqual(response_data.get("error"), "Method not allowed")
 
+    def test_not_authorised(self):
+        """unit test for method not allowed error"""
+        response = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps({
+            "username": "username",
+            "password": "password"
+        }))
+        response_data = json.loads(response.data.decode())
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response_data.get("error"), "Wrong login credentials.")
+
     def test_page_not_found(self):
         """unit test for page not found error"""
         response = self.client.get(
@@ -427,5 +437,7 @@ class IncidentTestCase(unittest.TestCase):
 
     
     
+
+
 
 

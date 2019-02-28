@@ -23,16 +23,11 @@ def create_app(config_name):
             200,
         )
 
-    @app.errorhandler(400)
-    def _page_not_found(e):
-        return (jsonify({"error": "Bad JSON format data", "status": 400}), 400)
-
-    @app.errorhandler(401)
     def _not_authorized(e):
         return (
             jsonify(
                 {
-                    "error": "Access Denied",
+                    "error":"Wrong login credentials",
                     "status": 401,
                 }
             ),

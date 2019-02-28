@@ -45,5 +45,6 @@
   "tests/test_incident.py::IncidentTestCase::test_get_one_redflag_record",
   "tests/test_incident.py::IncidentTestCase::test_home_page",
   "tests/test_incident.py::IncidentTestCase::test_method_not_allowed",
+  "tests/test_incident.py::IncidentTestCase::test_not_authorised",
   "tests/test_incident.py::IncidentTestCase::test_page_not_found"
 ]
