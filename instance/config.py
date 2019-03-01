@@ -1,4 +1,5 @@
 import os
+from os import environ
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -8,7 +9,16 @@ class BaseConfig:
     class are shared across all environments  """
     DEBUG = False
     TESTING = False
-    JWT_SECRET_KEY = 'this-is-my-secret'
+    CSRF_ENABLED = True
+    SECRET_KEY = environ.get("JWT_SECRET_KEY")
+    JSON_SORT_KEYS = False
+    MAIL_SERVER = environ.get("MAIL_SERVER")
+    MAIL_PORT = environ.get("MAIL_PORT")
+    MAIL_USERNAME = environ.get("MAIL_USERNAME")
+    MAIL_DEFAULT_SENDER = environ.get("MAIL_DEFAULT_SENDER")
+    MAIL_PASSWORD = environ.get("MAIL_PASSWORD")
+    MAIL_USE_TLS = False
+    MAIL_USE_SSL = True
 
 
 class DevelopmentConfig(BaseConfig):

@@ -31,6 +31,14 @@ class UserTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 201)
         self.assertEqual(response_data['status'], 201)
         self.assertIsInstance(response_data, dict)
+
+    def test_can_signup_user_with_no_data(self):
+        
+        res = self.client.post('/api/v1/auth/signup', content_type="application/json")
+        response_data = json.loads(res.data.decode())
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(response_data['status'], 400)
+        self.assertIsInstance(response_data, dict)
             
     def test_register_with_missing_fields(self):
         data = {

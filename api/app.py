@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
 from api.views.user import users_bp
 from api.views.incident import (
     create_incident_bp,
@@ -15,6 +16,7 @@ def create_app(config_name):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
+    CORS(app)
 
     @app.route("/")
     def _home():
@@ -22,7 +24,7 @@ def create_app(config_name):
             jsonify({"message": "Welcome to iReporter Api V1", "status": 200}),
             200,
         )
-
+    @app.errorhandler(401)
     def _not_authorized(e):
         return (
             jsonify(
@@ -33,6 +35,10 @@ def create_app(config_name):
             ),
             401,
         )
+    @app.errorhandler(400)
+    def _bad_request(e):
+        return (jsonify({"error": "Bad JSON format data", "status": 400}), 400)
+
 
     @app.errorhandler(404)
     def _page_not_found(e):
