@@ -8,8 +8,6 @@ from api.utilitiez.responses import (
     duplicate_phone_number,
 )
 from database.db import DatabaseConnection
-
-
 class User:
     """class defines the user objects structure"""
 
@@ -80,6 +78,14 @@ class User:
         self.db.cursor_database.execute(user_sql)
         user_details = self.db.cursor_database.fetchone()
         return user_details
+
+    def get_user_mail_and_user_name(self, user_id):
+        sql = (
+            "SELECT email, user_name FROM users WHERE"
+            f" user_id='{user_id}';"
+        )
+        self.db.cursor_database.execute(sql)
+        return self.db.cursor_database.fetchone()
 
     def is_valid_credentials(self, user_name, user_password):
         """Function for verrifying user credentials before login"""

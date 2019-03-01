@@ -1,6 +1,7 @@
 from flask import jsonify, request
 from api.models.incident import Incident
-from api.utilitiez.auth_token import get_current_identity
+from api.models.user import User
+from api.utilitiez.auth_token import get_current_identity, send_mail
 from api.utilitiez.responses import delete_not_allowed, wrong_status
 from api.utilitiez.validation import (
     validate_new_incident,
@@ -258,6 +259,16 @@ class IncidentController:
             updated_record = incident_obj.update_incident_status(
                 inc_id=incident_id, inc_type=incident_type, status=status
             )
+            Reporter = User().get_user_mail_and_user_name(user_id=updated_record["created_by"])
+            email = Reporter["email"]
+            user_name = Reporter["user_name"]
+            incident_title = updated_record["title"]
+            message = (
+                f"Hello {user_name}, the status of your {incident_type}"
+                f" record titled '{incident_title}' has been updated to {status}"
+            )
+            send_mail(message= message, receiver=email)
+
 
             response = (
                 jsonify(
