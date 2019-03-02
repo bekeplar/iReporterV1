@@ -1,5 +1,5 @@
 """File for all user authentication code"""
-
+from flask_mail import Message, Mail
 import datetime
 import jwt
 from flask import request, jsonify
@@ -9,6 +9,7 @@ from os import environ
 from api.utilitiez.responses import expired_token_message, invalid_token_message
 from database.db import DatabaseConnection
 
+mail = Mail()
 secret_key = environ.get("JWT_SECRET_KEY", 'this-is-my-secret')
 db = DatabaseConnection()
 
@@ -114,3 +115,10 @@ def admin_required(func):
         return func(*args, **kwargs)
 
     return wrapper
+
+def send_mail(message, receiver, subject='iReporterV1 App', reply_to="keplaxireporter@gmail.com"):
+    msg = Message(body=message, subject=subject,
+                  recipients=[receiver],
+                  reply_to=reply_to)
+    mail.send(msg)
+    return None

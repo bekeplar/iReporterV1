@@ -127,18 +127,11 @@ class IncidentTestCase(unittest.TestCase):
         self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user_data))        
         res1 = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps(self.user_login_data))
         self.assertEqual(res1.status_code, 200)
-        redflag1_data = {
-            "location": [60, 120],
-            "comment": "",
-            "created_by": 1,
-            "type": "redflag"
-
-                }
         res = self.client.post('/api/v1/redflags', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(redflag1_data))
+            headers={'Authorization': 'Bearer ' + self.token})
         response_data = json.loads(res.data.decode())
-        self.assertEqual(res.status_code, 201)
-        self.assertEqual(response_data['status'], 201)
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(response_data['status'], 400)
         self.assertIsInstance(response_data, dict)
 
 
@@ -180,18 +173,12 @@ class IncidentTestCase(unittest.TestCase):
         self.client.post('/api/v1/auth/signup', content_type="application/json", data=json.dumps(self.user_data))        
         res1 = self.client.post('/api/v1/auth/login', content_type="application/json", data=json.dumps(self.user_login_data))
         self.assertEqual(res1.status_code, 200)
-        intervention1_data = {
-            "location": [60, 120],
-            "comment": "These are serious allegations",
-            "created_by": 1,
-            "type": "intervention"
-
-                }
+        
         res = self.client.post('/api/v1/interventions', content_type="application/json",
-            headers={'Authorization': 'Bearer ' + self.token}, data=json.dumps(intervention1_data))
+            headers={'Authorization': 'Bearer ' + self.token})
         response_data = json.loads(res.data.decode())
-        self.assertEqual(res.status_code, 201)
-        self.assertEqual(response_data['status'], 201)
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(response_data['status'], 400)
         self.assertIsInstance(response_data, dict)
 
 
